@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "I_BasePawn.h"
+#include "I_Grid.h"
+#include "I_BaseGameState.h"
+#include "GS_Base.h"
 #include "PC_Base.generated.h"
 
 UCLASS()

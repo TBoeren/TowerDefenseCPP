@@ -22,6 +22,12 @@ AGrid::AGrid()
 void AGrid::BeginPlay()
 {
 	Super::BeginPlay();
+
+	II_BaseGameState* GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState()); 
+	if(GameStateInterface)
+	{
+		GameStateInterface->SetGrid(this);
+	}
 }
 
 // Called every frame
@@ -80,7 +86,7 @@ void AGrid::CreateGrid()
 
 	//Create selection geometry and procedural mesh
 	CreateLine(FVector(0, (TileSize/2), 0), FVector(TileSize ,(TileSize/2),0), TileSize, SelectionVertices, SelectionTriangles);
-	//SelectionProceduralMesh->SetVisibility(false, false); TODO remove comment after testing
+	SelectionProceduralMesh->SetVisibility(false, false);
 	SelectionProceduralMesh->CreateMeshSection_LinearColor(0, SelectionVertices, SelectionTriangles, Normals, UV0, VertexColors, Tangents, false);
 	SelectionProceduralMesh->SetMaterial(0, SelectionMaterialInstance);
 }
@@ -109,21 +115,25 @@ void AGrid::CreateLine(FVector Start, FVector End, float Thickness, TArray<FVect
 
 float AGrid::GridWidth() const
 {
+	//Calculate and return the width of the grid
 	float Width = (NumColumns * TileSize);
 	return Width;
 }
 
 float AGrid::GridHeight() const
 {
+	//Calculate and return the height of the grid
 	float Height = (NumRows * TileSize);
 	return Height;
 }
 
 UMaterialInstanceDynamic *AGrid::CreateMaterialInstance(FLinearColor Color, float Opacity)
 {
+	//Create the dynamic material instance
 	UMaterialInstanceDynamic* TempMaterialInstance;
 	TempMaterialInstance = UMaterialInstanceDynamic::Create(GridMaterial, this);
 
+	//Set the color and opacity and return the dynamic material instance
 	TempMaterialInstance->SetVectorParameterValue("Color", Color);
 	TempMaterialInstance->SetScalarParameterValue("Opacity", Opacity);
 
@@ -132,20 +142,61 @@ UMaterialInstanceDynamic *AGrid::CreateMaterialInstance(FLinearColor Color, floa
 
 bool AGrid::LocationToTile(FVector Location, int &Row, int &Column)
 {
-	return true;
+	//Convert the given position to a row and column
+	int LocationRow = FMath::Floor((((Location.X - GetActorLocation().X) / GridWidth())* NumRows));
+	int LocationColumn = FMath::Floor((((Location.Y - GetActorLocation().Y) / GridHeight())* NumColumns));
+
+	//return the rows and check if they are valid
+	Row = LocationRow;
+	Column = LocationColumn;
+
+	return TileIsValid(LocationRow, LocationColumn);
 }
 
 bool AGrid::TileToGridLocation(int Row, int Column, bool Center, FVector2D &GridLocation)
 {
-	return true;
+	//If you want the center of the tile, half of the tile size will be added to the calculations. Otherwise, you get the bottom left of the tile
+	if(Center)
+	{
+		GridLocation.X = (((Row * TileSize) + GetActorLocation().X) + (TileSize / 2));
+		GridLocation.Y = (((Column * TileSize) + GetActorLocation().X) + (TileSize / 2));
+	}
+	else
+	{
+		GridLocation.X = ((Row * TileSize) + GetActorLocation().X);
+		GridLocation.Y = ((Column * TileSize) + GetActorLocation().X);
+	}
+
+	return TileIsValid(Row, Column);
 }
 
 void AGrid::SetSelectedTile(int Row, int Column)
 {
+	//Create a variable to set the grid location to
+	FVector2D GridLocation;
 
+	if(TileToGridLocation(Row, Column, false, GridLocation))
+	{
+		//If over a valid tile, set the visibility to true
+		SelectionProceduralMesh->SetVisibility(true, false);
+		SelectionProceduralMesh->SetWorldLocation(FVector(GridLocation.X, GridLocation.Y, GetActorLocation().Z),false, nullptr, ETeleportType::None);
+	}
+	else
+	{
+		//If over a invalid tile, set the visibility to false
+		SelectionProceduralMesh->SetVisibility(true, false);
+	}
 }
 
 bool AGrid::TileIsValid(int Row, int Column)
 {
-	return true;
+	if( (Row >= 0 && Row < NumRows) && (Column >= 0 && Row < NumColumns) )
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	
 }

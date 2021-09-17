@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+#include "I_Grid.h"
+#include "I_BaseGameState.h"
+#include "GS_Base.h"
 #include "Grid.generated.h"
 
 UCLASS()
-class MYPROJECT123_API AGrid : public AActor
+class MYPROJECT123_API AGrid : public AActor, public II_Grid
 {
 	GENERATED_BODY()
 	
@@ -70,19 +73,10 @@ private:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION()
-	bool LocationToTile (FVector Location, int &Row, int &Column);
-
-	UFUNCTION()
-	bool TileToGridLocation(int Row, int Column, bool Center, FVector2D &GridLocation);
-
-	UFUNCTION()
-	void SetSelectedTile(int Row, int Column);
-
-	UFUNCTION()
-	bool TileIsValid(int Row, int Column);
-
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	virtual bool LocationToTile (FVector Location, int &Row, int &Column) override;
+	virtual bool TileToGridLocation(int Row, int Column, bool Center, FVector2D &GridLocation) override;
+	virtual void SetSelectedTile(int Row, int Column) override;
+	virtual bool TileIsValid(int Row, int Column) override;
 };
