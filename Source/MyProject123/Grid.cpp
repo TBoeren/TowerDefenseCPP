@@ -159,12 +159,12 @@ bool AGrid::TileToGridLocation(int Row, int Column, bool Center, FVector2D &Grid
 	if(Center)
 	{
 		GridLocation.X = (((Row * TileSize) + GetActorLocation().X) + (TileSize / 2));
-		GridLocation.Y = (((Column * TileSize) + GetActorLocation().X) + (TileSize / 2));
+		GridLocation.Y = (((Column * TileSize) + GetActorLocation().Y) + (TileSize / 2));
 	}
 	else
 	{
 		GridLocation.X = ((Row * TileSize) + GetActorLocation().X);
-		GridLocation.Y = ((Column * TileSize) + GetActorLocation().X);
+		GridLocation.Y = ((Column * TileSize) + GetActorLocation().Y);
 	}
 
 	return TileIsValid(Row, Column);
@@ -184,13 +184,13 @@ void AGrid::SetSelectedTile(int Row, int Column)
 	else
 	{
 		//If over a invalid tile, set the visibility to false
-		SelectionProceduralMesh->SetVisibility(true, false);
+		SelectionProceduralMesh->SetVisibility(false, false);
 	}
 }
 
 bool AGrid::TileIsValid(int Row, int Column)
 {
-	if( (Row >= 0 && Row < NumRows) && (Column >= 0 && Row < NumColumns) )
+	if( (Row >= 0 && Row < NumRows) && (Column >= 0 && Column < NumColumns) )
 	{
 		return true;
 	}
