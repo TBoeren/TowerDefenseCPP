@@ -3,6 +3,23 @@
 
 APC_Base::APC_Base()
 {
+    
+}
+
+// Called when the game starts or when spawned
+void APC_Base::BeginPlay()
+{
+    Super::BeginPlay();
+
+    II_BaseGameState* GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState()); 
+	if(GameStateInterface)
+	{
+		GameStateInterface->GetGrid(Grid);
+	}
+    else
+    {
+        return;
+    }
 }
 
 void APC_Base::SetupInputComponent()
@@ -13,6 +30,7 @@ void APC_Base::SetupInputComponent()
     InputComponent->BindAxis(TEXT("MouseMove"), this, &APC_Base::MouseMove);
     InputComponent->BindAction(TEXT("CameraZoomIn"), IE_Pressed, this, &APC_Base::CameraZoomIn);
     InputComponent->BindAction(TEXT("CameraZoomOut"), IE_Pressed, this, &APC_Base::CameraZoomOut);
+    InputComponent->BindAction(TEXT("SelectButton"), IE_Pressed, this, &APC_Base::OnMouseButtonDown);
 }
 
 void APC_Base::MouseMove(float Value)
@@ -30,17 +48,6 @@ void APC_Base::MouseMove(float Value)
         }       
     }
 
-    AActor* Grid;
-    II_BaseGameState* GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState()); 
-	if(GameStateInterface)
-	{
-		GameStateInterface->GetGrid(Grid);
-	}
-    else
-    {
-        return;
-    }
-
     II_Grid* GridInterface = Cast<II_Grid>(Grid);
     if(GridInterface)
     {
@@ -56,12 +63,32 @@ void APC_Base::MouseMove(float Value)
             {
                 //If the location is on the grid, highlight the appropriate tile
                 GridInterface->SetSelectedTile(Row, Column);
+                CurrentTile = FIntPoint(Row, Column);
             }
         }
         else
         {
             //If it is not on the grid, pass a false value to set the visibility back to hidden
             GridInterface->SetSelectedTile(-1, -1);
+            CurrentTile = FIntPoint(-1, -1);
+        }
+    }
+}
+
+void APC_Base::OnMouseButtonDown()
+{
+    FVector2D GridLocation;
+
+    II_Grid* GridInterface = Cast<II_Grid>(Grid);
+    if(GridInterface)
+    {
+        if(GridInterface->TileToGridLocation(CurrentTile.X, CurrentTile.Y, true, GridLocation))
+        {  
+            //When clicking on a valid tile
+            FRotator Rotation(0.0f, 0.0f, 0.0f);
+            FActorSpawnParameters SpawnInfo;
+            SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+            ATowerBase* TowerTemp = GetWorld()->SpawnActor<ATowerBase>(TowerToSpawn, FVector(GridLocation.X, GridLocation.Y, Grid->GetActorLocation().Z), Rotation, SpawnInfo);
         }
     }
 }
