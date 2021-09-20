@@ -18,7 +18,7 @@ APA_Base::APA_Base()
 
     //Create the camera boom
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
-    CameraBoom->AttachToComponent(BoxCollision, FAttachmentTransformRules::SnapToTargetIncludingScale);
+    CameraBoom->AttachToComponent(BoxCollision, FAttachmentTransformRules::KeepRelativeTransform);
 
     //Create the top down camera and attach it to the camera boom
     TopDownCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Top Down Camera"));

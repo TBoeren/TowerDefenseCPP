@@ -14,13 +14,6 @@ ATowerBase::ATowerBase()
     //Create the tower mesh
     TowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tower Mesh"));
 	TowerMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-	//Set the datatable. 
-	static ConstructorHelpers::FObjectFinder<UDataTable> TowerDataObject(TEXT("DataTable'/Game/Blueprints/Towers/DT_TowerData.DT_TowerData'"));
-	if (TowerDataObject.Succeeded())
-	{
-  		TowerData = TowerDataObject.Object;
-	}
 }
 
 // Called when the game starts or when spawned
