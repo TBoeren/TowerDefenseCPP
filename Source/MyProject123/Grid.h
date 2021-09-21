@@ -8,6 +8,8 @@
 #include "I_Grid.h"
 #include "I_BaseGameState.h"
 #include "GS_Base.h"
+#include "TowerBase.h"
+#include "PC_Base.h"
 #include "Grid.generated.h"
 
 UCLASS()
@@ -51,6 +53,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Grid|Constants")
 	UMaterialInterface* GridMaterial;
 
+	UPROPERTY(VisibleAnywhere, Category = "Grid|Tower Placement")
+	TArray<FIntPoint> AllOccupiedTiles;
+
+	UPROPERTY(VisibleAnywhere, Category = "Grid|Tower Placement")
+	FIntPoint CurrentlySelectedTile;
+
 	UProceduralMeshComponent* LineProceduralMesh;
 	UProceduralMeshComponent* SelectionProceduralMesh;
 	USceneComponent* Root;
@@ -70,6 +78,9 @@ private:
 	UFUNCTION()
 	UMaterialInstanceDynamic* CreateMaterialInstance(FLinearColor Color, float Opacity);
 
+	UFUNCTION()
+	void WhenSelectedTileUpdated(FIntPoint Tile);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -79,4 +90,6 @@ public:
 	virtual bool TileToGridLocation(int Row, int Column, bool Center, FVector2D &GridLocation) override;
 	virtual void SetSelectedTile(int Row, int Column) override;
 	virtual bool TileIsValid(int Row, int Column) override;
+	virtual void AddOccupiedTile(FIntPoint Tile) override;
+	virtual void ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct) override;
 };

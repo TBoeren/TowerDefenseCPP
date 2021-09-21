@@ -4,15 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Engine/DataTable.h"
 #include "I_BasePawn.h"
 #include "I_Grid.h"
 #include "I_BaseGameState.h"
+#include "I_BasePlayerController.h"
 #include "GS_Base.h"
 #include "TowerBase.h"
 #include "PC_Base.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTowerDelegate, FIntPoint, SelectedTile);
+
 UCLASS()
-class MYPROJECT123_API APC_Base : public APlayerController
+class MYPROJECT123_API APC_Base : public APlayerController, public II_BasePlayerController
 {
 	GENERATED_BODY()
 
@@ -33,25 +37,37 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Base PlayerController|Settings")
 	float ZoomSpeed;
 
-	UPROPERTY(EditAnywhere, Category = "Base PlayerController|Tower Placement")
-	TSubclassOf<ATowerBase> TowerToSpawn;
-
 	UPROPERTY(VisibleAnywhere, Category = "Base PlayerController|Tower Placement")
 	FIntPoint CurrentTile;
 
 	UPROPERTY(VisibleAnywhere, Category = "Base PlayerController|Grid")
 	AActor* Grid;
+
+	UPROPERTY(EditAnywhere)
+	class UDataTable* TowerData;
+
+	UPROPERTY()
+	bool BuildLocationSelected = false;
 	
 public:
 	// Called to bind functionality to input
 	virtual void SetupInputComponent() override;
+
+	UPROPERTY(BlueprintAssignable, Category = "Base PlayerController | Tower Placement")
+	FTowerDelegate OnTileSelected;
+
+	UPROPERTY(BlueprintAssignable, Category = "Base PlayerController | Tower Placement")
+	FTowerDelegate OnTileUnselected;
 
 private:
 	UFUNCTION()
 	void MouseMove(float Value);
 
 	UFUNCTION()
-	void OnMouseButtonDown();
+	void OnSelectButtonDown();
+
+	UFUNCTION()
+	void OnCancelButtonDown();
 
 	UFUNCTION()
 	void CameraZoomIn();
@@ -61,4 +77,6 @@ private:
 	
 	UFUNCTION()
 	FVector2D CalculateEdgeScroll(FVector2D MousePosition);
+
+	void PassTowerToConstruct_Implementation(FName TowerRowName) override;
 };

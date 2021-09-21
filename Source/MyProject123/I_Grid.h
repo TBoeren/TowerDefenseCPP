@@ -33,4 +33,10 @@ public:
 
 	UFUNCTION()
 	virtual bool TileIsValid(int Row, int Column) = 0;
+
+	UFUNCTION()
+	virtual void AddOccupiedTile(FIntPoint Tile) = 0;
+
+	UFUNCTION()
+	virtual void ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct) = 0;
 };
