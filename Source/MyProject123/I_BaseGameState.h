@@ -27,5 +27,5 @@ public:
 	virtual void SetGrid(AActor* Grid) = 0;
 
 	UFUNCTION()
-	virtual void GetGrid(AActor* &Grid) = 0;
+	virtual void GetGrids(TArray<AActor*> &Grids) = 0;
 };

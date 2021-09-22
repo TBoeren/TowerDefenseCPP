@@ -5,10 +5,10 @@
 
 void AGS_Base::SetGrid(AActor* Grid)
 {
-    TowerGrid = Grid;
+    TowerGrids.Add(Grid);
 }
 
-void AGS_Base::GetGrid(AActor* &Grid)
+void AGS_Base::GetGrids(TArray<AActor*> &Grids)
 {
-    Grid = TowerGrid;
+    Grids = TowerGrids;
 }

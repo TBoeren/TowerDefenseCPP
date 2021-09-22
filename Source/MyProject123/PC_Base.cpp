@@ -13,7 +13,7 @@ void APC_Base::BeginPlay()
     II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
     if (GameStateInterface)
     {
-        GameStateInterface->GetGrid(Grid);
+        GameStateInterface->GetGrids(Grids);
     }
     else
     {
@@ -50,26 +50,29 @@ void APC_Base::MouseMove(float Value)
 
     if (!BuildLocationSelected)
     {
-        II_Grid *GridInterface = Cast<II_Grid>(Grid);
-        if (GridInterface)
+        for (AActor *Grid : Grids)
         {
-            //Check if you are on the grid
-            FHitResult Result;
-            if (GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, Result))
+            II_Grid *GridInterface = Cast<II_Grid>(Grid);
+            if (GridInterface)
             {
-                //Convert the location of the mouse to the grid location
-                int Row;
-                int Column;
+                //Check if you are on the grid
+                FHitResult Result;
+                if (GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, Result))
+                {
+                    //Convert the location of the mouse to the grid location
+                    int Row;
+                    int Column;
 
-                if (GridInterface->LocationToTile(Result.Location, Row, Column))
-                {
-                    //If the location is on the grid, highlight the appropriate tile
-                    GridInterface->SetSelectedTile(Row, Column);
-                }
-                else
-                {
-                    //If it is not on the grid, pass a false value to set the visibility back to hidden
-                    GridInterface->SetSelectedTile(-1, -1);
+                    if (GridInterface->LocationToTile(Result.Location, Row, Column))
+                    {
+                        //If the location is on the grid, highlight the appropriate tile
+                        GridInterface->SetSelectedTile(Row, Column);
+                    }
+                    else
+                    {
+                        //If it is not on the grid, pass a false value to set the visibility back to hidden
+                        GridInterface->SetSelectedTile(-1, -1);
+                    }
                 }
             }
         }
@@ -91,19 +94,23 @@ void APC_Base::OnSelectButtonDown()
             }
             else
             {
-                //Check if you are on the grid
-                II_Grid *GridInterface = Cast<II_Grid>(Grid);
-                if (GridInterface)
+                for (AActor *Grid : Grids)
                 {
-                    //Convert the location of the mouse to the grid location
-                    int Row;
-                    int Column;
-
-                    if (GridInterface->LocationToTile(Result.Location, Row, Column))
+                    //Check if you are on the grid
+                    II_Grid *GridInterface = Cast<II_Grid>(Grid);
+                    if (GridInterface)
                     {
-                        //Save the selected tile and prevent the hover check from continuing
-                        BuildLocationSelected = true;
-                        OnTileSelected.Broadcast(FIntPoint(Row, Column));
+                        //Convert the location of the mouse to the grid location
+                        int Row;
+                        int Column;
+
+                        if (GridInterface->LocationToTile(Result.Location, Row, Column))
+                        {
+                            //Save the selected tile and prevent the hover check from continuing
+                            BuildLocationSelected = true;
+                            OnTileSelected.Broadcast(FIntPoint(Row, Column));
+                            CurrentlySelectedGrid = Grid;
+                        }
                     }
                 }
             }
@@ -118,6 +125,7 @@ void APC_Base::OnCancelButtonDown()
     {
         BuildLocationSelected = false;
         OnTileUnselected.Broadcast(FIntPoint(-1, -1));
+        CurrentlySelectedGrid = nullptr;
     }
 }
 
@@ -161,7 +169,7 @@ void APC_Base::PassTowerToConstruct_Implementation(FName TowerRowName)
     FTowerStats *TowerStats = TowerData->FindRow<FTowerStats>(TowerRowName, ContextString, true);
 
     //and pass it to the Tower construct function
-    II_Grid *GridInterface = Cast<II_Grid>(Grid);
+    II_Grid *GridInterface = Cast<II_Grid>(CurrentlySelectedGrid);
     if (GridInterface)
     {
         GridInterface->ConstructTower(TowerStats->TowerBlueprint);

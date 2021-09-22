@@ -18,9 +18,9 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	public:
 
 	UPROPERTY()
-	AActor* TowerGrid;
+	TArray<AActor*> TowerGrids;
 
 	virtual void SetGrid(AActor* Grid) override;
-	virtual void GetGrid(AActor* &Grid) override;
+	virtual void GetGrids(TArray<AActor*> &Grids) override;
 
 };

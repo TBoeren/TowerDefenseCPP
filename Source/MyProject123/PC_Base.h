@@ -41,7 +41,10 @@ protected:
 	FIntPoint CurrentTile;
 
 	UPROPERTY(VisibleAnywhere, Category = "Base PlayerController|Grid")
-	AActor* Grid;
+	TArray<AActor*> Grids;
+
+	UPROPERTY(VisibleAnywhere, Category = "Base PlayerController|Grid")
+	AActor* CurrentlySelectedGrid;
 
 	UPROPERTY(EditAnywhere)
 	class UDataTable* TowerData;
