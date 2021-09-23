@@ -52,4 +52,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString RowName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
+	float UnitHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
+	float UnitMoveSpeed;
+
 };

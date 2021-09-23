@@ -2,7 +2,7 @@
 
 
 #include "BaseEnemy.h"
-
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ABaseEnemy::ABaseEnemy()
@@ -17,11 +17,15 @@ void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//Get the stats for this tower
+	//Get the stats for this unit
 	static const FString ContextString(TEXT("Tower Data"));
 	FUnitStats* UnitStats = UnitData->FindRow<FUnitStats>(FName(RowName), ContextString, true);
 	if(UnitStats)
 	{
+		UnitHealth = UnitStats->UnitHealth;
+		UnitMoveSpeed = UnitStats->UnitMoveSpeed;
+		GetCharacterMovement()->MaxWalkSpeed = UnitMoveSpeed;
+
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *UnitStats->UnitName);
 	}
 }
