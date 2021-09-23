@@ -16,6 +16,13 @@ void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//Get the stats for this tower
+	static const FString ContextString(TEXT("Tower Data"));
+	FUnitStats* UnitStats = UnitData->FindRow<FUnitStats>(FName(RowName), ContextString, true);
+	if(UnitStats)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *UnitStats->UnitName);
+	}
 }
 
 // Called every frame
