@@ -51,7 +51,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditAnywhere)
+	UFUNCTION(BlueprintNativeEvent)
+	void UpdateHealthBar(float UpdatedHealth);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString RowName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")

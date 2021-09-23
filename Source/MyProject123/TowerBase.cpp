@@ -83,5 +83,4 @@ void ATowerBase::ApplyDamage()
 
 	//Call the apply damage on the first entry in the array, make that the target and passing the tower damage from the data table
 	UGameplayStatics::ApplyDamage(EnemiesInRange[0], TowerStats->TowerDamage, nullptr, this, nullptr);
-	
 }

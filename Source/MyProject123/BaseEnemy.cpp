@@ -46,12 +46,23 @@ void ABaseEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
 {
+	//Remove damage from the unit health
 	UnitHealth -= DamageAmount;
 
+	//Update the units healthbar with the new health
+	ABaseEnemy::UpdateHealthBar(UnitHealth);
+	
+	//if the HP is 0 or lower, destroy self
 	if(UnitHealth <= 0)
 	{
 		Destroy();
 	}
-	return 0;
+
+	return DamageAmount;
+}
+
+void ABaseEnemy::UpdateHealthBar_Implementation(float UpdatedHealth)
+{
+
 }
 
