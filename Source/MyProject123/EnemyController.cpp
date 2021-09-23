@@ -2,6 +2,7 @@
 
 
 #include "EnemyController.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemyController::AEnemyController()
@@ -12,9 +13,19 @@ AEnemyController::AEnemyController()
 }
 
 // Called when the game starts or when spawned
-void AEnemyController::BeginPlay()
+void AEnemyController::OnPossess(APawn *InPawn)
 {
-	Super::BeginPlay();
-	
+	Super::OnPossess(InPawn);
+
+	II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
+    if (GameStateInterface)
+    {
+        GameStateInterface->GetEnemyGoal(GoalLocation);
+    }
+    else
+    {
+        return;
+    }
+
     MoveTo(GoalLocation);
 }

@@ -3,6 +3,7 @@
 
 #include "BaseEnemy.h"
 
+
 // Sets default values
 ABaseEnemy::ABaseEnemy()
 {

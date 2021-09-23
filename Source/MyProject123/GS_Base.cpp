@@ -12,3 +12,13 @@ void AGS_Base::GetGrids(TArray<AActor*> &Grids)
 {
     Grids = TowerGrids;
 }
+
+void AGS_Base::SetEnemyGoal(FVector EnemyGoal)
+{
+    EnemyTargetGoal = EnemyGoal;
+}
+
+void AGS_Base::GetEnemyGoal(FVector &EnemyGoal)
+{
+    EnemyGoal = EnemyTargetGoal;
+}

@@ -28,4 +28,10 @@ public:
 
 	UFUNCTION()
 	virtual void GetGrids(TArray<AActor*> &Grids) = 0;
+
+	UFUNCTION()
+	virtual void SetEnemyGoal(FVector EnemyGoal) = 0;
+
+	UFUNCTION()
+	virtual void GetEnemyGoal(FVector &EnemyGoal) = 0;
 };

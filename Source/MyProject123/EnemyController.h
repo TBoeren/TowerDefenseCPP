@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "I_BaseGameState.h"
+#include "GS_Base.h"
 #include "EnemyController.generated.h"
 
 /**
@@ -18,7 +20,7 @@ class MYPROJECT123_API AEnemyController : public AAIController
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn *InPawn) override;
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Base Enemy|Movement")
