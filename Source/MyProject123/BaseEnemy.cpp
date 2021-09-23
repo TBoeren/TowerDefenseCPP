@@ -44,3 +44,14 @@ void ABaseEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 }
 
+float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser)
+{
+	UnitHealth -= DamageAmount;
+
+	if(UnitHealth <= 0)
+	{
+		Destroy();
+	}
+	return 0;
+}
+

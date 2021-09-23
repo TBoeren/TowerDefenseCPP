@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/Character.h"
+#include "I_Enemy.h"
 #include "BaseEnemy.generated.h"
 
 USTRUCT(BlueprintType)
@@ -27,7 +28,7 @@ public:
 };
 
 UCLASS()
-class MYPROJECT123_API ABaseEnemy : public ACharacter
+class MYPROJECT123_API ABaseEnemy : public ACharacter, public II_Enemy
 {
 	GENERATED_BODY()
 
@@ -38,6 +39,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, class AController * EventInstigator, AActor * DamageCauser) override;
 
 	UPROPERTY(EditAnywhere)
 	class UDataTable* UnitData;

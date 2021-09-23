@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "TowerBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATowerBase::ATowerBase()
@@ -9,6 +10,8 @@ ATowerBase::ATowerBase()
 
 	//Create the attack range 
     SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Range Collision"));
+	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ATowerBase::OnOverlapBegin);
+	SphereCollision->OnComponentEndOverlap.AddDynamic(this, &ATowerBase::OnOverlapEnd);
 	RootComponent = SphereCollision;
 
     //Create the tower mesh
@@ -26,7 +29,42 @@ void ATowerBase::BeginPlay()
 	FTowerStats* TowerStats = TowerData->FindRow<FTowerStats>(FName(RowName), ContextString, true);
 	if(TowerStats)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *TowerStats->TowerName);
+		SphereCollision->SetSphereRadius(TowerStats->TowerRange, true);
+	}
+}
+
+void ATowerBase::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//Add the unit to the enemies in range array
+	EnemiesInRange.Add(OtherActor);
+
+	//And start the timer if it is not running
+	if(GetWorldTimerManager().TimerExists(AttackTimer))
+    {
+        if(GetWorldTimerManager().IsTimerPaused(AttackTimer))
+        {
+            GetWorldTimerManager().UnPauseTimer(AttackTimer);
+        }
+    }
+    else
+    {
+		//Get the attack rate from the data table
+		static const FString ContextString(TEXT("Tower Data"));
+		FTowerStats* TowerStats = TowerData->FindRow<FTowerStats>(FName(RowName), ContextString, true);
+
+        GetWorldTimerManager().SetTimer(AttackTimer, this, &ATowerBase::ApplyDamage, TowerStats->TowerAttackSpeed, true);
+    }
+}
+
+void ATowerBase::OnOverlapEnd(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	//Remove the actor that has existed the range from the array
+	EnemiesInRange.Remove(OtherActor);
+
+	//Check if the array is empty. If it is, stop attacking
+	if(EnemiesInRange.Num() == 0)
+	{
+		GetWorldTimerManager().PauseTimer(AttackTimer);
 	}
 }
 
@@ -37,3 +75,13 @@ void ATowerBase::Tick(float DeltaTime)
 
 }
 
+void ATowerBase::ApplyDamage()
+{
+	//Get the attack damage from the data table
+	static const FString ContextString(TEXT("Tower Data"));
+	FTowerStats* TowerStats = TowerData->FindRow<FTowerStats>(FName(RowName), ContextString, true);
+
+	//Call the apply damage on the first entry in the array, make that the target and passing the tower damage from the data table
+	UGameplayStatics::ApplyDamage(EnemiesInRange[0], TowerStats->TowerDamage, nullptr, this, nullptr);
+	
+}

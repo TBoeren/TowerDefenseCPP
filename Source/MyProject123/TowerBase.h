@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
 #include "Components/SphereComponent.h"
+#include "TimerManager.h"
 #include "TowerBase.generated.h"
 
 USTRUCT(BlueprintType)
@@ -22,6 +23,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TowerDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TowerRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TowerAttackSpeed;
@@ -43,19 +47,34 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere)
+	UFUNCTION(Category = "Tower Base|Attacking")
+	virtual void OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+	UFUNCTION(Category = "Tower Base|Attacking")
+	virtual void OnOverlapEnd(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY(EditAnywhere, Category = "Tower Base")
 	class UDataTable* TowerData;
+
+	UPROPERTY(EditAnywhere, Category = "Tower Base|Attacking")
+	TArray<AActor*> EnemiesInRange;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Tower Base|Attacking")
+	FTimerHandle AttackTimer;
+
+	UFUNCTION()
+	void ApplyDamage();
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Tower Base|Attacking")
 	class USphereComponent* SphereCollision;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Tower Base")
 	class UStaticMeshComponent* TowerMesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Tower Base")
 	FString RowName;
 };
