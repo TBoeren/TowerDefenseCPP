@@ -173,6 +173,12 @@ void APC_Base::PassTowerToConstruct_Implementation(FName TowerRowName)
     if (GridInterface)
     {
         GridInterface->ConstructTower(TowerStats->TowerBlueprint);
+
+        II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
+        if (GameStateInterface)
+        {
+            GameStateInterface->SetResources(-TowerStats->TowerCost);
+        }
     }
     APC_Base::OnCancelButtonDown();
 }

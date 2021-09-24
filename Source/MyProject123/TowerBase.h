@@ -32,6 +32,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int TowerBuildTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int TowerCost;
 };
 
 UCLASS()

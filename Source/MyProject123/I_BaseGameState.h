@@ -34,4 +34,22 @@ public:
 
 	UFUNCTION()
 	virtual void GetEnemyGoal(FVector &EnemyGoal) = 0;
+
+	UFUNCTION()
+	virtual void SetLives(int Lives) = 0;
+
+	UFUNCTION()
+	virtual void SetResources(int Resources) = 0;
+
+	UFUNCTION()
+	virtual int GetLivesPure() = 0;
+
+	UFUNCTION()
+	virtual int GetResourcesPure() = 0;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
+	int GetLives();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
+	int GetResources();
 };
