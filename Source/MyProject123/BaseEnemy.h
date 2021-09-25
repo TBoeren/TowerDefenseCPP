@@ -56,8 +56,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	virtual void Death(bool RewardResources) override;
+
 	UFUNCTION(BlueprintNativeEvent)
-	void UpdateHealthBar(float UpdatedHealth);
+	void UpdateHealthBar(float UpdatedHealth);	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString RowName;

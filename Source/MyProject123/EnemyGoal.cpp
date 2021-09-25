@@ -42,7 +42,12 @@ void AEnemyGoal::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor
 	II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
 	if (GameStateInterface)
 	{
-		GameStateInterface->SetLives(-1);
-		OtherActor->Destroy();
+		GameStateInterface->SetLives(-1);	
+	}
+
+	II_Enemy* EnemyInterface = Cast<II_Enemy>(OtherActor);
+	if (EnemyInterface)
+	{
+		EnemyInterface->Death(false);		
 	}
 }

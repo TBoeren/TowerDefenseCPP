@@ -51,21 +51,7 @@ float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const &Dama
 	//if the HP is 0 or lower,
 	if (UnitHealth <= 0)
 	{	
-		//get the resources gained upon death
-		static const FString ContextString(TEXT("Tower Data"));
-		FUnitStats *UnitStats = UnitData->FindRow<FUnitStats>(FName(RowName), ContextString, true);
-
-		II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
-		if (GameStateInterface)
-		{
-			//Add it to the current amount then destroy self
-			GameStateInterface->SetResources(UnitStats->ResourcesGained);
-			Destroy();
-		}
-		else
-		{
-			Destroy();
-		}
+		ABaseEnemy::Death(true);
 	}
 
 	return DamageAmount;
@@ -74,4 +60,26 @@ float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const &Dama
 void ABaseEnemy::UpdateHealthBar_Implementation(float UpdatedHealth)
 {
 	//Done in BP
+}
+
+void ABaseEnemy::Death(bool RewardResources)
+{
+	//get the resources gained upon death
+	static const FString ContextString(TEXT("Tower Data"));
+	FUnitStats *UnitStats = UnitData->FindRow<FUnitStats>(FName(RowName), ContextString, true);
+
+	II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
+	if (GameStateInterface && RewardResources)
+	{
+		//Add it to the current amount, remove from total units in wave and then destroy self
+		GameStateInterface->SetResources(UnitStats->ResourcesGained);
+		GameStateInterface->SetTotalUnitsInWave(-1);
+		Destroy();
+	}
+	else
+	{
+		//Remove from total units
+		GameStateInterface->SetTotalUnitsInWave(-1);
+		Destroy();
+	}
 }

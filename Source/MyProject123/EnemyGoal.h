@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
 #include "I_BaseGameState.h"
+#include "I_Enemy.h"
 #include "GS_Base.h"
 #include "EnemyGoal.generated.h"
 

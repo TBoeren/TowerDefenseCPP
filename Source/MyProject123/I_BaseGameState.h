@@ -52,4 +52,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
 	int GetResources();
+
+	UFUNCTION()
+	virtual void SetCurrentWave(int Wave) = 0;
+
+	UFUNCTION()
+	virtual void SetTotalUnitsInWave(int TotalUnits) = 0;
 };

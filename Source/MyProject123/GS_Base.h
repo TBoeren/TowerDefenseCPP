@@ -32,6 +32,8 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	bool IsWaveOver();
+
 	public:
 
 	UPROPERTY()
@@ -46,24 +48,40 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	UPROPERTY()
 	int CurrentResources;
 
+	UPROPERTY()
+	int CurrentWave;
+
+	UPROPERTY()
+	int TotalUnitsInWave;
+
 	UPROPERTY(BlueprintAssignable, Category = "Base Game State | Resources")
 	FGameStateDelegate OnLivesUpdated;
 
 	UPROPERTY(BlueprintAssignable, Category = "Base Game State | Resources")
 	FGameStateDelegate OnResourcesUpdated;
 
+	UPROPERTY(BlueprintAssignable, Category = "Base Game State | Waves")
+	FGameStateDelegate OnCurrentWaveUpdated;
+
 	UPROPERTY(EditAnywhere)
 	class UDataTable *LevelData;
 
 	virtual void SetGrid(AActor* Grid) override;
 	virtual void GetGrids(TArray<AActor*> &Grids) override;
+
 	virtual void SetEnemyGoal(FVector EnemyGoal) override;
 	virtual void GetEnemyGoal(FVector &EnemyGoal) override;
+
 	virtual void SetLives(int Lives) override;
 	virtual void SetResources(int Resources) override;
+
 	virtual int GetLivesPure() override;
 	virtual int GetResourcesPure() override;
+
 	int GetLives_Implementation() override;
 	int GetResources_Implementation() override;
+
+	virtual void SetCurrentWave(int Wave) override;
+	virtual void SetTotalUnitsInWave(int TotalUnits) override;
 
 };

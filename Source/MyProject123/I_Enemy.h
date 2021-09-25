@@ -23,4 +23,6 @@ class MYPROJECT123_API II_Enemy
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
+	virtual void Death(bool RewardResources) = 0;
+
 };

@@ -15,6 +15,8 @@ void AGS_Base::BeginPlay()
         AGS_Base::SetResources(MatchStats->StartOfMatchResources);
         AGS_Base::SetLives(MatchStats->StartOfMatchLives);
     }
+
+    AGS_Base::SetCurrentWave(0);
 }
 
 void AGS_Base::SetGrid(AActor *Grid)
@@ -67,4 +69,32 @@ int AGS_Base::GetLives_Implementation()
 int AGS_Base::GetResources_Implementation()
 {
     return CurrentResources;
+}
+
+void AGS_Base::SetCurrentWave(int Wave)
+{
+    CurrentWave = Wave;
+    OnCurrentWaveUpdated.Broadcast(CurrentWave);
+}
+
+void AGS_Base::SetTotalUnitsInWave(int TotalUnits)
+{
+    TotalUnitsInWave += TotalUnits;
+
+    if(IsWaveOver())
+    {
+        SetCurrentWave((CurrentWave + 1));
+    }
+}
+
+bool AGS_Base::IsWaveOver()
+{
+    if(TotalUnitsInWave == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
