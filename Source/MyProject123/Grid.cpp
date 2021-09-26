@@ -150,8 +150,8 @@ UMaterialInstanceDynamic *AGrid::CreateMaterialInstance(FLinearColor Color, floa
 bool AGrid::LocationToTile(FVector Location, int &Row, int &Column)
 {
 	//Convert the given position to a row and column
-	int LocationRow = FMath::Floor((((Location.X - GetActorLocation().X) / GridWidth()) * NumRows));
-	int LocationColumn = FMath::Floor((((Location.Y - GetActorLocation().Y) / GridHeight()) * NumColumns));
+	int LocationRow = FMath::Floor((((Location.X - GetActorLocation().X) / GridHeight()) * NumRows));
+	int LocationColumn = FMath::Floor((((Location.Y - GetActorLocation().Y) / GridWidth()) * NumColumns));
 
 	//return the rows and check if they are valid
 	Row = LocationRow;
