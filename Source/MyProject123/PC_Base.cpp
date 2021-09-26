@@ -89,7 +89,7 @@ void APC_Base::OnSelectButtonDown()
         if (GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, Result))
         {
             //If a tower is hit, open the tower upgrade menu TODO
-            if (Result.Actor->IsA<ATowerBase>())
+            if (Result.Actor->IsValidLowLevel() && Result.Actor->IsA<ATowerBase>())
             {
             }
             else
