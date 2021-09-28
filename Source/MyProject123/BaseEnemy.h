@@ -26,6 +26,12 @@ public:
 	float UnitHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float UnitFlatArmor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float UnitPercentArmor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float UnitMoveSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -69,6 +75,13 @@ public:
 	float UnitHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
+	float UnitFlatArmor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
+	float UnitPercentArmor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
 	float UnitMoveSpeed;
+
 
 };

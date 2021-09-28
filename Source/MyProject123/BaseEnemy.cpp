@@ -20,11 +20,12 @@ void ABaseEnemy::BeginPlay()
 	FUnitStats *UnitStats = UnitData->FindRow<FUnitStats>(FName(RowName), ContextString, true);
 	if (UnitStats)
 	{
-		UnitHealth = UnitStats->UnitHealth;
+		float UnscaledUnitHealth = UnitStats->UnitHealth;
 		UnitMoveSpeed = UnitStats->UnitMoveSpeed;
+		UnitFlatArmor = UnitStats->UnitFlatArmor;
+		UnitPercentArmor = UnitStats->UnitPercentArmor;
+		UnitHealth = (UnscaledUnitHealth/((100-UnitPercentArmor)/100));
 		GetCharacterMovement()->MaxWalkSpeed = UnitMoveSpeed;
-
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *UnitStats->UnitName);
 	}
 }
 
@@ -43,7 +44,7 @@ void ABaseEnemy::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent
 float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const &DamageEvent, class AController *EventInstigator, AActor *DamageCauser)
 {
 	//Remove damage from the unit health
-	UnitHealth -= DamageAmount;
+	UnitHealth -= FMath::Clamp((DamageAmount - UnitFlatArmor), 1.f, 10000.f);
 
 	//Update the units healthbar with the new health
 	ABaseEnemy::UpdateHealthBar(UnitHealth);
