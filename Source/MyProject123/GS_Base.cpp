@@ -98,3 +98,18 @@ bool AGS_Base::IsWaveOver()
         return false;
     }
 }
+
+void AGS_Base::SetTotalWaves(int Waves)
+{
+    TotalWaves = Waves;
+}
+
+int AGS_Base::GetTotalWavesPure()
+{
+    return TotalWaves;
+}
+
+int AGS_Base::GetTotalWaves_Implementation()
+{
+    return TotalWaves;
+}

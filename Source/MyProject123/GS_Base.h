@@ -54,6 +54,9 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	UPROPERTY()
 	int TotalUnitsInWave;
 
+	UPROPERTY()
+	int TotalWaves;
+
 	UPROPERTY(BlueprintAssignable, Category = "Base Game State | Resources")
 	FGameStateDelegate OnLivesUpdated;
 
@@ -73,15 +76,19 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	virtual void GetEnemyGoal(FVector &EnemyGoal) override;
 
 	virtual void SetLives(int Lives) override;
-	virtual void SetResources(int Resources) override;
-
 	virtual int GetLivesPure() override;
+	int GetLives_Implementation() override;
+
+	virtual void SetResources(int Resources) override;
+	int GetResources_Implementation() override;
 	virtual int GetResourcesPure() override;
 
-	int GetLives_Implementation() override;
-	int GetResources_Implementation() override;
-
 	virtual void SetCurrentWave(int Wave) override;
+	
 	virtual void SetTotalUnitsInWave(int TotalUnits) override;
+
+	virtual void SetTotalWaves(int Waves) override;
+	virtual int GetTotalWavesPure() override;
+	int GetTotalWaves_Implementation() override;
 
 };
