@@ -58,9 +58,6 @@ public:
 
 	UFUNCTION()
 	virtual void SetTotalUnitsInWave(int TotalUnits) = 0;
-	
-	UFUNCTION()
-	virtual void SetTotalWaves(int TotalWaves) = 0;
 
 	UFUNCTION()
 	virtual int GetTotalWavesPure() = 0;

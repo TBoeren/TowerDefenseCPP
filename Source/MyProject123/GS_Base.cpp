@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GS_Base.h"
+#include "EnemySpawner.h"
 
 void AGS_Base::BeginPlay()
 {
@@ -16,7 +17,11 @@ void AGS_Base::BeginPlay()
         AGS_Base::SetLives(MatchStats->StartOfMatchLives);
     }
 
+    //Set the current wave to 0
     AGS_Base::SetCurrentWave(0);
+
+    //And calculate the total waves and set it 
+    TotalWaves = AGS_Base::CalculateTotalWaves();
 }
 
 void AGS_Base::SetGrid(AActor *Grid)
@@ -99,9 +104,25 @@ bool AGS_Base::IsWaveOver()
     }
 }
 
-void AGS_Base::SetTotalWaves(int Waves)
+int AGS_Base::CalculateTotalWaves()
 {
-    TotalWaves = Waves;
+    int LTotalWaves = 0;
+    TArray<AActor*> FoundActors;
+
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActors);
+
+    for(AActor* Actor : FoundActors)
+    {
+        AEnemySpawner* EnemySpawner = Cast<AEnemySpawner>(Actor);
+        int LRowLength = EnemySpawner->WaveData->GetRowNames().Num();
+
+        if(LRowLength > LTotalWaves)
+        {
+            LTotalWaves = LRowLength;
+        }
+    }
+    
+    return LTotalWaves;
 }
 
 int AGS_Base::GetTotalWavesPure()

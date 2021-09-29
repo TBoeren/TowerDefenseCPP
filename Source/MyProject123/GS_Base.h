@@ -6,6 +6,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "Engine/DataTable.h"
 #include "I_BaseGameState.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GS_Base.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameStateDelegate, int, Current);
@@ -32,7 +33,11 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
 	bool IsWaveOver();
+
+	UFUNCTION()
+	int CalculateTotalWaves();
 
 	public:
 
@@ -87,8 +92,7 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	
 	virtual void SetTotalUnitsInWave(int TotalUnits) override;
 
-	virtual void SetTotalWaves(int Waves) override;
 	virtual int GetTotalWavesPure() override;
 	int GetTotalWaves_Implementation() override;
-
+	
 };
