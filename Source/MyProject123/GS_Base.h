@@ -6,7 +6,10 @@
 #include "GameFramework/GameStateBase.h"
 #include "Engine/DataTable.h"
 #include "I_BaseGameState.h"
+#include "I_EnemySpawner.h"
+#include "EnemySpawner.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 #include "GS_Base.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameStateDelegate, int, Current);
@@ -38,6 +41,9 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 
 	UFUNCTION()
 	int CalculateTotalWaves();
+
+	UFUNCTION()
+	void StartNextWave();
 
 	public:
 
@@ -71,8 +77,23 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	UPROPERTY(BlueprintAssignable, Category = "Base Game State | Waves")
 	FGameStateDelegate OnCurrentWaveUpdated;
 
+	UPROPERTY(BlueprintAssignable, Category = "Base Game State | Waves")
+	FGameStateDelegate OnNextWaveCountdownStarted;
+
+	UPROPERTY(BlueprintAssignable, Category = "Base Game State | Waves")
+	FGameStateDelegate OnAllWavesCompleted;
+
+	UPROPERTY()
+	FTimerHandle NextWaveTimer;
+
 	UPROPERTY(EditAnywhere)
 	class UDataTable *LevelData;
+
+	UPROPERTY()
+	TArray<AActor*> AllEnemySpawners;
+
+	UPROPERTY()
+	bool FirstTower = false;
 
 	virtual void SetGrid(AActor* Grid) override;
 	virtual void GetGrids(TArray<AActor*> &Grids) override;
@@ -94,5 +115,7 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 
 	virtual int GetTotalWavesPure() override;
 	int GetTotalWaves_Implementation() override;
-	
+
+	virtual void StartNextWaveCountdown(int Seconds) override;
+	virtual bool FirstTowerPlaced() override;
 };

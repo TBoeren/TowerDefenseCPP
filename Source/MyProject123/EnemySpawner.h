@@ -6,8 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
 #include "BaseEnemy.h"
-#include "GS_Base.h"
 #include "I_BaseGameState.h"
+#include "I_EnemySpawner.h"
 #include "TimerManager.h"
 #include "EnemySpawner.generated.h"
 
@@ -38,7 +38,7 @@ public:
 };
 
 UCLASS()
-class MYPROJECT123_API AEnemySpawner : public AActor
+class MYPROJECT123_API AEnemySpawner : public AActor, public II_EnemySpawner
 {
 	GENERATED_BODY()
 	
@@ -49,9 +49,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintCallable)
-	void StartNextWave();
 
 	UFUNCTION()
 	void SpawnUnits(FWaveStats CurrentUnitsInWave, FName CurrentRowName);
@@ -80,5 +77,9 @@ public:
 
 	UFUNCTION()
 	void OnCurrentWaveUpdated(int Wave);
+
+	//Interface functions
+	virtual int GetTotalWavesInSpawner() override;
+	virtual void StartNextWave() override;
 
 };

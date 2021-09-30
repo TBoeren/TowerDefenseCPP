@@ -2,6 +2,7 @@
 
 #include "BaseEnemy.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GS_Base.h"
 
 // Sets default values
 ABaseEnemy::ABaseEnemy()

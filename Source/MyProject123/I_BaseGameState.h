@@ -64,4 +64,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Wave Management")
 	int GetTotalWaves();
+
+	UFUNCTION()
+	virtual void StartNextWaveCountdown(int Seconds) = 0;
+
+	UFUNCTION()
+	virtual bool FirstTowerPlaced() = 0;
 };

@@ -227,6 +227,12 @@ void AGrid::ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct)
 
 		//After construction, add the tile to the currently occupied tiles and unselect the current tile.
 		AddOccupiedTile(CurrentlySelectedTile);
+
+		II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
+		if (GameStateInterface)
+		{
+			GameStateInterface->FirstTowerPlaced();
+		}
 	}
 }
 

@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GS_Base.h"
-#include "EnemySpawner.h"
 
 void AGS_Base::BeginPlay()
 {
@@ -22,6 +21,35 @@ void AGS_Base::BeginPlay()
 
     //And calculate the total waves and set it 
     TotalWaves = AGS_Base::CalculateTotalWaves();
+
+    //Start the next wave countdown in the BP for now TODO needs to start when the first tower is placed
+}
+
+void AGS_Base::StartNextWaveCountdown(int Seconds)
+{
+    //Start a timer for the start next wave function
+    if (GetWorldTimerManager().TimerExists(NextWaveTimer))
+	{
+		GetWorldTimerManager().ClearTimer(NextWaveTimer);
+	}
+
+    GetWorldTimerManager().SetTimer(NextWaveTimer, this, &AGS_Base::StartNextWave, (float)Seconds, false);
+
+    //Call the event dispatcher to inform the UI of the countdown
+    OnNextWaveCountdownStarted.Broadcast(Seconds);
+}
+
+void AGS_Base::StartNextWave()
+{
+    //Once all is prepared, start the enemyspawners
+    for(AActor* EnemySpawner : AllEnemySpawners)
+    {
+        II_EnemySpawner* EnemySpawnerInterface = Cast<II_EnemySpawner>(EnemySpawner);
+        if(EnemySpawnerInterface)
+        {
+            EnemySpawnerInterface->StartNextWave();
+        }
+    }
 }
 
 void AGS_Base::SetGrid(AActor *Grid)
@@ -79,7 +107,19 @@ int AGS_Base::GetResources_Implementation()
 void AGS_Base::SetCurrentWave(int Wave)
 {
     CurrentWave = Wave;
-    OnCurrentWaveUpdated.Broadcast(CurrentWave);
+    if(CurrentWave == TotalWaves)
+    {
+        OnAllWavesCompleted.Broadcast(CurrentWave);
+    }
+    else if(CurrentWave == 0)
+    {
+        OnCurrentWaveUpdated.Broadcast(CurrentWave);
+    } 
+    else
+    {
+        StartNextWaveCountdown(10);
+        OnCurrentWaveUpdated.Broadcast(CurrentWave);
+    }
 }
 
 void AGS_Base::SetTotalUnitsInWave(int TotalUnits)
@@ -112,9 +152,16 @@ int AGS_Base::CalculateTotalWaves()
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActors);
 
     for(AActor* Actor : FoundActors)
-    {
-        AEnemySpawner* EnemySpawner = Cast<AEnemySpawner>(Actor);
-        int LRowLength = EnemySpawner->WaveData->GetRowNames().Num();
+    {             
+        //Add the spawner to an array for future use
+        AllEnemySpawners.Add(Actor);
+
+        int LRowLength = 0;
+        II_EnemySpawner* EnemySpawnerInterface = Cast<II_EnemySpawner>(Actor);
+        if(EnemySpawnerInterface)
+        {
+            LRowLength = EnemySpawnerInterface->GetTotalWavesInSpawner();
+        }       
 
         if(LRowLength > LTotalWaves)
         {
@@ -133,4 +180,18 @@ int AGS_Base::GetTotalWavesPure()
 int AGS_Base::GetTotalWaves_Implementation()
 {
     return TotalWaves;
+}
+
+bool AGS_Base::FirstTowerPlaced()
+{
+    if(!FirstTower)
+    {
+        FirstTower = true;
+        StartNextWaveCountdown(10);
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }

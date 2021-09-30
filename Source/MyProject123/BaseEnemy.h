@@ -7,7 +7,6 @@
 #include "GameFramework/Character.h"
 #include "I_Enemy.h"
 #include "I_BaseGameState.h"
-#include "GS_Base.h"
 #include "BaseEnemy.generated.h"
 
 USTRUCT(BlueprintType)

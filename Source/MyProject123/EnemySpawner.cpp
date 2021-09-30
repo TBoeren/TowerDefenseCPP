@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "EnemySpawner.h"
+#include "GS_Base.h"
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -136,4 +137,9 @@ void AEnemySpawner::CompleteWave()
 void AEnemySpawner::OnCurrentWaveUpdated(int Wave)
 {
 	CurrentWave = Wave;
+}
+
+int AEnemySpawner::GetTotalWavesInSpawner()
+{
+	return WaveData->GetRowNames().Num();
 }
