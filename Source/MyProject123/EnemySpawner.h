@@ -81,5 +81,6 @@ public:
 	//Interface functions
 	virtual int GetTotalWavesInSpawner() override;
 	virtual void StartNextWave() override;
+	virtual int CalculateTotalEnemies() override;
 
 };

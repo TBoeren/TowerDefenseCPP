@@ -22,6 +22,9 @@ public:
 	FString UnitName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* UnitImage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float UnitHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

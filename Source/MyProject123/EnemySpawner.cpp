@@ -21,33 +21,6 @@ void AEnemySpawner::BeginPlay()
 	{
 		GameState->OnCurrentWaveUpdated.AddDynamic(this, &AEnemySpawner::OnCurrentWaveUpdated);
 	}
-
-	//Calculate the total amount of enemies that will spawn in the current wave
-	TArray<FName> RowNames = WaveData->GetRowNames();
-	FName CurrentRowName = RowNames[CurrentWave];
-
-	//Use that to find the appropriate wave information
-	static const FString ContextString(TEXT("Tower Data"));
-	FWaveContainer *WaveStats = WaveData->FindRow<FWaveContainer>(FName(CurrentRowName), ContextString, true);
-	if (WaveStats)
-	{
-		if (WaveStats->UnitsInWave.Num() > 0)
-		{
-			int TotalUnitsInWave = 0;
-
-			for (FWaveStats Wave : WaveStats->UnitsInWave)
-			{
-				TotalUnitsInWave += Wave.AmountToSpawn;
-			}
-
-			//Pass this total to the game state
-			II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
-			if (GameStateInterface)
-			{
-				GameStateInterface->SetTotalUnitsInWave(TotalUnitsInWave);
-			}
-		}
-	}
 }
 
 // Called every frame
@@ -142,4 +115,31 @@ void AEnemySpawner::OnCurrentWaveUpdated(int Wave)
 int AEnemySpawner::GetTotalWavesInSpawner()
 {
 	return WaveData->GetRowNames().Num();
+}
+
+int AEnemySpawner::CalculateTotalEnemies()
+{
+	//Calculate the total amount of enemies that will spawn in the current wave
+	TArray<FName> RowNames = WaveData->GetRowNames();
+	FName CurrentRowName = RowNames[CurrentWave];
+
+	//Use that to find the appropriate wave information
+	static const FString ContextString(TEXT("Tower Data"));
+	FWaveContainer *WaveStats = WaveData->FindRow<FWaveContainer>(FName(CurrentRowName), ContextString, true);
+	if (WaveStats)
+	{
+		if (WaveStats->UnitsInWave.Num() > 0)
+		{
+			int TotalUnitsInWave = 0;
+
+			for (FWaveStats Wave : WaveStats->UnitsInWave)
+			{
+				TotalUnitsInWave += Wave.AmountToSpawn;
+			}
+
+			return TotalUnitsInWave;
+		}
+	}
+
+	return 0;
 }

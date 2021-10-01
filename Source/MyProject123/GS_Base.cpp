@@ -48,6 +48,7 @@ void AGS_Base::StartNextWave()
         if(EnemySpawnerInterface)
         {
             EnemySpawnerInterface->StartNextWave();
+            SetTotalUnitsInWave(EnemySpawnerInterface->CalculateTotalEnemies());
         }
     }
 }

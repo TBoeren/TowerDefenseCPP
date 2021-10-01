@@ -25,5 +25,6 @@ public:
 
 	virtual int GetTotalWavesInSpawner() = 0;
 	virtual void StartNextWave() = 0;
+	virtual int CalculateTotalEnemies() = 0;
 
 };
