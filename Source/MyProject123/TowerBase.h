@@ -33,6 +33,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TowerAttackSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = "0", ClampMax = "1")) 	//TODO when final variables are set, maybe convert to calculate automatically
+	float TowerDamagePercentage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = "0", ClampMax = "1")) 	//TODO when final variables are set, maybe convert to calculate automatically
+	float TowerRangePercentage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = "0", ClampMax = "1")) 	//TODO when final variables are set, maybe convert to calculate automatically
+	float TowerAttackSpeedPercentage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int TowerBuildTime;
 
