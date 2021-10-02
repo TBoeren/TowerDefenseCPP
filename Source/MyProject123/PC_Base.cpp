@@ -39,7 +39,7 @@ void APC_Base::MouseMove(float Value)
     FVector2D MousePosition;
 
     //Set the mouse position and move the camera if near the edge
-    if (GetMousePosition(MousePosition.X, MousePosition.Y) && !IsInputKeyDown(EKeys::LeftMouseButton))
+    if (GetMousePosition(MousePosition.X, MousePosition.Y) && !BuildLocationSelected)
     {
         II_BasePawn *PawnInterface = Cast<II_BasePawn>(GetPawn());
         if (PawnInterface)

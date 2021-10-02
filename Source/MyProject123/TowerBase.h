@@ -22,6 +22,9 @@ public:
 	FString TowerName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* TowerImage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TowerDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -35,6 +38,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int TowerCost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText TowerInfo;
 };
 
 UCLASS()
