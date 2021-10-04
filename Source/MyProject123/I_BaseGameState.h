@@ -53,6 +53,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
 	int GetResources();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
+	TArray<FName> GetAvailableTowers();
+
 	UFUNCTION()
 	virtual void SetCurrentWave(int Wave) = 0;
 

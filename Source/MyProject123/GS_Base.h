@@ -25,6 +25,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int StartOfMatchResources;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FName> AvailableTowers;
 };
 
 UCLASS()
@@ -108,6 +111,8 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	virtual void SetResources(int Resources) override;
 	int GetResources_Implementation() override;
 	virtual int GetResourcesPure() override;
+
+	TArray<FName> GetAvailableTowers_Implementation() override;
 
 	virtual void SetCurrentWave(int Wave) override;
 	

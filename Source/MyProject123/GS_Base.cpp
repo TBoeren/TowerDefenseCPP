@@ -21,8 +21,6 @@ void AGS_Base::BeginPlay()
 
     //And calculate the total waves and set it 
     TotalWaves = AGS_Base::CalculateTotalWaves();
-
-    //Start the next wave countdown in the BP for now TODO needs to start when the first tower is placed
 }
 
 void AGS_Base::StartNextWaveCountdown(int Seconds)
@@ -103,6 +101,19 @@ int AGS_Base::GetLives_Implementation()
 int AGS_Base::GetResources_Implementation()
 {
     return CurrentResources;
+}
+
+TArray<FName> AGS_Base::GetAvailableTowers_Implementation()
+{
+    TArray<FName> temp;
+    static const FString ContextString(TEXT("Tower Data"));
+    FMatchStats *MatchStats = LevelData->FindRow<FMatchStats>(FName(GetWorld()->GetName()), ContextString, true);
+    if (MatchStats)
+    {
+        return MatchStats->AvailableTowers;
+    }
+
+    return temp;
 }
 
 void AGS_Base::SetCurrentWave(int Wave)
