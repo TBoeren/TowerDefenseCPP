@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+#include "Engine/DecalActor.h"
+#include "Components/DecalComponent.h"
 #include "I_Grid.h"
 #include "I_BaseGameState.h"
 #include "GS_Base.h"
@@ -53,15 +55,26 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Grid|Constants")
 	UMaterialInterface* GridMaterial;
 
+	UPROPERTY(EditAnywhere, Category = "Grid|Constants")
+	UMaterialInterface* RangeDecalMaterial;
+
 	UPROPERTY(VisibleAnywhere, Category = "Grid|Tower Placement")
 	TArray<FIntPoint> AllOccupiedTiles;
 
 	UPROPERTY(VisibleAnywhere, Category = "Grid|Tower Placement")
 	FIntPoint CurrentlySelectedTile;
 
+	UPROPERTY()
 	UProceduralMeshComponent* LineProceduralMesh;
+
+	UPROPERTY()
 	UProceduralMeshComponent* SelectionProceduralMesh;
+
+	UPROPERTY()
 	USceneComponent* Root;
+
+	UPROPERTY()
+	ADecalActor* RangeDecal;
 
 	UFUNCTION(BlueprintCallable)
 	void CreateGrid();
@@ -91,5 +104,8 @@ public:
 	virtual void SetSelectedTile(int Row, int Column) override;
 	virtual bool TileIsValid(int Row, int Column) override;
 	virtual void AddOccupiedTile(FIntPoint Tile) override;
+
 	virtual void ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct) override;
+	virtual void ConstructRangeDecal(float TowerRange) override;
+	virtual void DestroyRangeDecal() override;
 };

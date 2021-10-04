@@ -39,4 +39,10 @@ public:
 
 	UFUNCTION()
 	virtual void ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct) = 0;
+
+	UFUNCTION()
+	virtual void ConstructRangeDecal(float TowerRange) = 0;
+
+	UFUNCTION()
+	virtual void DestroyRangeDecal() = 0;
 };

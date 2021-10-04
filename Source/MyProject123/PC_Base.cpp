@@ -182,3 +182,17 @@ void APC_Base::PassTowerToConstruct_Implementation(FName TowerRowName)
     }
     APC_Base::OnCancelButtonDown();
 }
+
+void APC_Base::PassTowerRange_Implementation(FName TowerRowName)
+{
+    //Get the proper class from the data table
+    static const FString ContextString(TEXT("Tower Data"));
+    FTowerStats *TowerStats = TowerData->FindRow<FTowerStats>(TowerRowName, ContextString, true);
+
+    //and pass its range to the grid
+    II_Grid *GridInterface = Cast<II_Grid>(CurrentlySelectedGrid);
+    if (GridInterface)
+    {
+        GridInterface->ConstructRangeDecal(TowerStats->TowerRange);
+    }
+}

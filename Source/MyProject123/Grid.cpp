@@ -210,6 +210,7 @@ bool AGrid::TileIsValid(int Row, int Column)
 void AGrid::WhenSelectedTileUpdated(FIntPoint Tile)
 {
 	CurrentlySelectedTile = Tile;
+	AGrid::DestroyRangeDecal();
 }
 
 void AGrid::ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct)
@@ -233,6 +234,36 @@ void AGrid::ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct)
 		{
 			GameStateInterface->FirstTowerPlaced();
 		}
+	}
+}
+
+void AGrid::ConstructRangeDecal(float TowerRange)
+{
+	FVector2D GridLocation;
+	FRotator Rotation(0.0f, -90.0f, 0.0f);
+
+	//Get the location of the current tile and check if the tile is valid
+	if (TileToGridLocation(CurrentlySelectedTile.X, CurrentlySelectedTile.Y, true, GridLocation))
+	{
+		//Destroy the currently present decal
+		AGrid::DestroyRangeDecal();
+		RangeDecal = GetWorld()->SpawnActor<ADecalActor>(FVector(GridLocation.X, GridLocation.Y, GetActorLocation().Z), Rotation);
+
+		if (RangeDecal)
+		{	
+			//Set the decal material and update the size based on the float
+			RangeDecal->SetDecalMaterial(RangeDecalMaterial);
+			RangeDecal->GetDecal()->DecalSize = FVector(TowerRange, TowerRange, TowerRange);
+		}
+	}
+}
+
+void AGrid::DestroyRangeDecal()
+{
+	//If there is currently a range decal present, destroy it
+	if(RangeDecal)
+	{
+		RangeDecal->Destroy();
 	}
 }
 

@@ -93,6 +93,12 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Tower Base")
 	class UStaticMeshComponent* TowerMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tower Base")
+	class UDecalComponent* RangeDecal;
+
 	UPROPERTY(EditAnywhere, Category = "Tower Base")
 	FString RowName;
+
+	UPROPERTY(EditAnywhere, Category = "Tower Base")
+	UMaterialInterface* RangeDecalMaterial;
 };

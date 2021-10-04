@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "TowerBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/DecalActor.h"
+#include "Components/DecalComponent.h"
 
 // Sets default values
 ATowerBase::ATowerBase()
@@ -23,6 +25,9 @@ ATowerBase::ATowerBase()
 void ATowerBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Create the Decal
+	FRotator Rotation(-90.0f, -90.0f, 0.0f);
 	
 	//Get the stats for this tower
 	static const FString ContextString(TEXT("Tower Data"));
@@ -30,7 +35,13 @@ void ATowerBase::BeginPlay()
 	if(TowerStats)
 	{
 		SphereCollision->SetSphereRadius(TowerStats->TowerRange, true);
+		RangeDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), RangeDecalMaterial, FVector(TowerStats->TowerRange, TowerStats->TowerRange, TowerStats->TowerRange), GetActorLocation(), Rotation, 0.0f);
 	}
+
+	//Set the decal material and hide it the decal
+	RangeDecal->SetDecalMaterial(RangeDecalMaterial);
+	RangeDecal->SetRelativeRotation(Rotation);
+	RangeDecal->SetVisibility(false, false);
 }
 
 void ATowerBase::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -24,4 +24,7 @@ class MYPROJECT123_API II_BasePlayerController
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
 	void PassTowerToConstruct(FName TowerRowName);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
+	void PassTowerRange(FName TowerRowName);
 };

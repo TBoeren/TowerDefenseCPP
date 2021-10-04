@@ -82,4 +82,5 @@ private:
 	FVector2D CalculateEdgeScroll(FVector2D MousePosition);
 
 	void PassTowerToConstruct_Implementation(FName TowerRowName) override;
+	void PassTowerRange_Implementation(FName TowerRowName) override;
 };
