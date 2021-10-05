@@ -75,7 +75,7 @@ void ATowerBase::OnOverlapEnd(class UPrimitiveComponent* newComp, class AActor* 
 	//Check if the array is empty. If it is, stop attacking
 	if(EnemiesInRange.Num() == 0)
 	{
-		GetWorldTimerManager().PauseTimer(AttackTimer);
+		GetWorldTimerManager().ClearTimer(AttackTimer);
 	}
 }
 
