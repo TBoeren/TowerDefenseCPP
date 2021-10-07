@@ -73,4 +73,7 @@ public:
 
 	UFUNCTION()
 	virtual bool FirstTowerPlaced() = 0;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Game Management")
+	void PauseGame(bool Pause);
 };

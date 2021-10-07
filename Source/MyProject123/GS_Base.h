@@ -13,6 +13,7 @@
 #include "GS_Base.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGameStateDelegate, int, Current);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamePausedDelegate, bool, Paused);
 
 USTRUCT(BlueprintType)
 struct FMatchStats : public FTableRowBase
@@ -86,6 +87,9 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 	UPROPERTY(BlueprintAssignable, Category = "Base Game State | Waves")
 	FGameStateDelegate OnAllWavesCompleted;
 
+	UPROPERTY(BlueprintAssignable, Category = "Base PlayerController | Tower Placement")
+	FGamePausedDelegate OnGamePaused;
+
 	UPROPERTY()
 	FTimerHandle NextWaveTimer;
 
@@ -123,4 +127,6 @@ class MYPROJECT123_API AGS_Base : public AGameStateBase, public II_BaseGameState
 
 	virtual void StartNextWaveCountdown(int Seconds) override;
 	virtual bool FirstTowerPlaced() override;
+
+	void PauseGame_Implementation(bool Pause) override;
 };

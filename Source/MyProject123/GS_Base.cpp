@@ -207,3 +207,10 @@ bool AGS_Base::FirstTowerPlaced()
         return true;
     }
 }
+
+void AGS_Base::PauseGame_Implementation(bool Pause)
+{
+    // Unpauses/Pauses Game
+    UGameplayStatics::SetGamePaused(GetWorld(), Pause);
+    OnGamePaused.Broadcast(Pause);
+}
