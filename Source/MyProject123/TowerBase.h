@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TowerAttackSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TowerAOERadius;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin = "0", ClampMax = "1")) 	//TODO when final variables are set, maybe convert to calculate automatically
 	float TowerDamagePercentage;
 
@@ -81,7 +84,7 @@ protected:
 	FTimerHandle AttackTimer;
 
 	UFUNCTION()
-	void ApplyDamage();
+	virtual void ApplyDamage();
 
 public:	
 	// Called every frame
