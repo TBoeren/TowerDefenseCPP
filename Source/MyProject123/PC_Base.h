@@ -14,6 +14,7 @@
 #include "PC_Base.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTowerDelegate, FIntPoint, SelectedTile);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBuildingDelegate, AActor*, SelectedTower);
 
 UCLASS()
 class MYPROJECT123_API APC_Base : public APlayerController, public II_BasePlayerController
@@ -50,7 +51,7 @@ protected:
 	class UDataTable* TowerData;
 
 	UPROPERTY()
-	bool BuildLocationSelected = false;
+	bool LocationSelected = false;
 	
 public:
 	// Called to bind functionality to input
@@ -61,6 +62,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Base PlayerController | Tower Placement")
 	FTowerDelegate OnTileUnselected;
+
+	UPROPERTY(BlueprintAssignable, Category = "Base PlayerController | Tower Selection")
+	FBuildingDelegate OnTowerSelected;
 
 private:
 	UFUNCTION()
@@ -83,4 +87,5 @@ private:
 
 	void PassTowerToConstruct_Implementation(FName TowerRowName) override;
 	void PassTowerRange_Implementation(FName TowerRowName) override;
+	void PassTowerSell_Implementation(FName TowerRowName, AActor* TowerToSell) override;
 };

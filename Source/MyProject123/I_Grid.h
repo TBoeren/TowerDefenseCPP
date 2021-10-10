@@ -23,7 +23,7 @@ class MYPROJECT123_API II_Grid
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION()
-	virtual bool LocationToTile (FVector Location, int &Row, int &Column) = 0;
+	virtual bool LocationToTile (FVector Location, bool BuildingSelected, int &Row, int &Column) = 0;
 
 	UFUNCTION()
 	virtual bool TileToGridLocation(int Row, int Column, bool Center, FVector2D &GridLocation) = 0;
@@ -32,10 +32,10 @@ public:
 	virtual void SetSelectedTile(int Row, int Column) = 0;
 
 	UFUNCTION()
-	virtual bool TileIsValid(int Row, int Column) = 0;
+	virtual bool TileIsValid(int Row, int Column, bool BuildingSelected) = 0;
 
 	UFUNCTION()
-	virtual void AddOccupiedTile(FIntPoint Tile) = 0;
+	virtual void AddOccupiedTile(FIntPoint Tile, ATowerBase* Tower) = 0;
 
 	UFUNCTION()
 	virtual void ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct) = 0;
@@ -45,4 +45,7 @@ public:
 
 	UFUNCTION()
 	virtual void DestroyRangeDecal() = 0;
+
+	UFUNCTION()
+	virtual void SellTower(AActor* TowerToSell) = 0;
 };

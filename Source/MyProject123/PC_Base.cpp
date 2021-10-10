@@ -39,7 +39,7 @@ void APC_Base::MouseMove(float Value)
     FVector2D MousePosition;
 
     //Set the mouse position and move the camera if near the edge
-    if (GetMousePosition(MousePosition.X, MousePosition.Y) && !BuildLocationSelected)
+    if (GetMousePosition(MousePosition.X, MousePosition.Y) && !LocationSelected)
     {
         II_BasePawn *PawnInterface = Cast<II_BasePawn>(GetPawn());
         if (PawnInterface)
@@ -48,7 +48,7 @@ void APC_Base::MouseMove(float Value)
         }
     }
 
-    if (!BuildLocationSelected)
+    if (!LocationSelected)
     {
         for (AActor *Grid : Grids)
         {
@@ -63,7 +63,7 @@ void APC_Base::MouseMove(float Value)
                     int Row;
                     int Column;
 
-                    if (GridInterface->LocationToTile(Result.Location, Row, Column))
+                    if (GridInterface->LocationToTile(Result.Location, false, Row, Column))
                     {
                         //If the location is on the grid, highlight the appropriate tile
                         GridInterface->SetSelectedTile(Row, Column);
@@ -81,7 +81,7 @@ void APC_Base::MouseMove(float Value)
 
 void APC_Base::OnSelectButtonDown()
 {
-    if (!BuildLocationSelected)
+    if (!LocationSelected)
     {
         FVector2D GridLocation;
 
@@ -89,8 +89,29 @@ void APC_Base::OnSelectButtonDown()
         if (GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, Result))
         {
             //If a tower is hit, open the tower upgrade menu TODO
-            if (Result.Actor->IsValidLowLevel() && Result.Actor->IsA<ATowerBase>())
+            if (Result.GetActor()->IsValidLowLevel() && Result.GetActor()->IsA<ATowerBase>())
             {
+                for (AActor *Grid : Grids)
+                {
+                    //Find the grid that the tower to sell is located on
+                    II_Grid *GridInterface = Cast<II_Grid>(Grid);
+                    if (GridInterface)
+                    {
+                        //Convert the location of the mouse to the grid location
+                        int Row;
+                        int Column;
+
+                        if (GridInterface->LocationToTile(Result.GetActor()->GetActorLocation(), true, Row, Column))
+                        {
+                            //Save the selected tile and prevent the hover check from continuing
+                            CurrentlySelectedGrid = Grid;
+
+                            //Show the tower that is selected on the build menu
+                            LocationSelected = true;
+                            OnTowerSelected.Broadcast(Result.GetActor());
+                        }
+                    }
+                }
             }
             else
             {
@@ -104,10 +125,10 @@ void APC_Base::OnSelectButtonDown()
                         int Row;
                         int Column;
 
-                        if (GridInterface->LocationToTile(Result.Location, Row, Column))
+                        if (GridInterface->LocationToTile(Result.Location, false, Row, Column))
                         {
                             //Save the selected tile and prevent the hover check from continuing
-                            BuildLocationSelected = true;
+                            LocationSelected = true;
                             OnTileSelected.Broadcast(FIntPoint(Row, Column));
                             CurrentlySelectedGrid = Grid;
                         }
@@ -121,9 +142,9 @@ void APC_Base::OnSelectButtonDown()
 void APC_Base::OnCancelButtonDown()
 {
     //For now, allows the hovered tile to update properly again
-    if (BuildLocationSelected)
+    if (LocationSelected)
     {
-        BuildLocationSelected = false;
+        LocationSelected = false;
         OnTileUnselected.Broadcast(FIntPoint(-1, -1));
         CurrentlySelectedGrid = nullptr;
     }
@@ -195,4 +216,29 @@ void APC_Base::PassTowerRange_Implementation(FName TowerRowName)
     {
         GridInterface->ConstructRangeDecal(TowerStats->TowerRange);
     }
+}
+
+void APC_Base::PassTowerSell_Implementation(FName TowerRowName, AActor *TowerToSell)
+{
+    //Get the cost from the data table
+    static const FString ContextString(TEXT("Tower Data"));
+    FTowerStats *TowerStats = TowerData->FindRow<FTowerStats>(TowerRowName, ContextString, true);
+
+    //Call the grid and tell it to sell this tower
+    II_Grid *GridInterface = Cast<II_Grid>(CurrentlySelectedGrid);
+    if (GridInterface)
+    {
+        GridInterface->SellTower(TowerToSell);
+
+        //Update the resources with the sell value of the tower
+        II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
+        if (GameStateInterface)
+        {
+            int SellValue = ((TowerStats->TowerCost / 5) * 3);
+            GameStateInterface->SetResources(SellValue);
+        }
+    }
+
+    //Once it is sold, hide the menu again
+    APC_Base::OnCancelButtonDown();
 }

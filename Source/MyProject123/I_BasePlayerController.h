@@ -27,4 +27,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
 	void PassTowerRange(FName TowerRowName);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
+	void PassTowerSell(FName TowerRowName, AActor* TowerToSell);
 };

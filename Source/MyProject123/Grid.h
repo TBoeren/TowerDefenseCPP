@@ -59,7 +59,7 @@ private:
 	UMaterialInterface* RangeDecalMaterial;
 
 	UPROPERTY(VisibleAnywhere, Category = "Grid|Tower Placement")
-	TArray<FIntPoint> AllOccupiedTiles;
+	TMap<FIntPoint, ATowerBase*> AllOccupiedTiles;
 
 	UPROPERTY(VisibleAnywhere, Category = "Grid|Tower Placement")
 	FIntPoint CurrentlySelectedTile;
@@ -99,13 +99,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-	virtual bool LocationToTile (FVector Location, int &Row, int &Column) override;
+	virtual bool LocationToTile (FVector Location, bool BuildingSelected, int &Row, int &Column) override;
 	virtual bool TileToGridLocation(int Row, int Column, bool Center, FVector2D &GridLocation) override;
 	virtual void SetSelectedTile(int Row, int Column) override;
-	virtual bool TileIsValid(int Row, int Column) override;
-	virtual void AddOccupiedTile(FIntPoint Tile) override;
+	virtual bool TileIsValid(int Row, int Column, bool BuildingSelected) override;
+	virtual void AddOccupiedTile(FIntPoint Tile, ATowerBase* Tower) override;
 
 	virtual void ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct) override;
 	virtual void ConstructRangeDecal(float TowerRange) override;
 	virtual void DestroyRangeDecal() override;
+	virtual void SellTower(AActor* TowerToSell) override;
 };

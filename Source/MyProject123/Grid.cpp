@@ -147,7 +147,7 @@ UMaterialInstanceDynamic *AGrid::CreateMaterialInstance(FLinearColor Color, floa
 	return TempMaterialInstance;
 }
 
-bool AGrid::LocationToTile(FVector Location, int &Row, int &Column)
+bool AGrid::LocationToTile(FVector Location, bool BuildingSelected, int &Row, int &Column)
 {
 	//Convert the given position to a row and column
 	int LocationRow = FMath::Floor((((Location.X - GetActorLocation().X) / GridHeight()) * NumRows));
@@ -156,8 +156,15 @@ bool AGrid::LocationToTile(FVector Location, int &Row, int &Column)
 	//return the rows and check if they are valid
 	Row = LocationRow;
 	Column = LocationColumn;
-
-	return TileIsValid(LocationRow, LocationColumn);
+	
+	if(BuildingSelected)
+	{
+		return TileIsValid(LocationRow, LocationColumn, true);
+	}
+	else
+	{
+		return TileIsValid(LocationRow, LocationColumn, false);
+	}
 }
 
 bool AGrid::TileToGridLocation(int Row, int Column, bool Center, FVector2D &GridLocation)
@@ -174,7 +181,7 @@ bool AGrid::TileToGridLocation(int Row, int Column, bool Center, FVector2D &Grid
 		GridLocation.Y = ((Column * TileSize) + GetActorLocation().Y);
 	}
 
-	return TileIsValid(Row, Column);
+	return TileIsValid(Row, Column, false);
 }
 
 void AGrid::SetSelectedTile(int Row, int Column)
@@ -195,9 +202,9 @@ void AGrid::SetSelectedTile(int Row, int Column)
 	}
 }
 
-bool AGrid::TileIsValid(int Row, int Column)
+bool AGrid::TileIsValid(int Row, int Column, bool BuildingSelected)
 {
-	if ((Row >= 0 && Row < NumRows) && (Column >= 0 && Column < NumColumns) && !AllOccupiedTiles.Contains(FIntPoint(Row, Column)))
+	if ((Row >= 0 && Row < NumRows) && (Column >= 0 && Column < NumColumns) && (!AllOccupiedTiles.Contains(FIntPoint(Row, Column)) || BuildingSelected))
 	{
 		return true;
 	}
@@ -227,7 +234,7 @@ void AGrid::ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct)
 		ATowerBase *TowerTemp = GetWorld()->SpawnActor<ATowerBase>(TowerToConstruct, FVector(GridLocation.X, GridLocation.Y, GetActorLocation().Z), Rotation, SpawnInfo);
 
 		//After construction, add the tile to the currently occupied tiles and unselect the current tile.
-		AddOccupiedTile(CurrentlySelectedTile);
+		AddOccupiedTile(CurrentlySelectedTile, TowerTemp);
 
 		II_BaseGameState *GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
 		if (GameStateInterface)
@@ -267,7 +274,24 @@ void AGrid::DestroyRangeDecal()
 	}
 }
 
-void AGrid::AddOccupiedTile(FIntPoint Tile)
+void AGrid::AddOccupiedTile(FIntPoint Tile, ATowerBase* Tower)
 {
-	AllOccupiedTiles.Add(Tile);
+	AllOccupiedTiles.Add(Tile, Tower);
+}
+
+void AGrid::SellTower(AActor* TowerToSell)
+{
+	//Make local variables for storage
+	FIntPoint Tile;
+
+	//Convert the location of the tower to sell to an int point on the grid
+	if(AGrid::LocationToTile(TowerToSell->GetActorLocation(), true, Tile.X, Tile.Y))
+	{
+		//Get the actor from the TMap
+		ATowerBase** TowerTemp = AllOccupiedTiles.Find(Tile);
+
+		//Destroy it and remove it from the map
+		(*TowerTemp)->Destroy();
+		AllOccupiedTiles.Remove(Tile);
+	}
 }
