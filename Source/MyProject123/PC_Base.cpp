@@ -216,7 +216,7 @@ void APC_Base::UpdateGameSpeed()
     }
     else
     {
-        UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 2.5);
+        UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilationSpeed);
     }
 }
 

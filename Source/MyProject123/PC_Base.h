@@ -42,6 +42,10 @@ protected:
     UPROPERTY(EditAnywhere, Category = "Base PlayerController|Settings")
     float ZoomSpeed;
 
+    //The speed at which time increases when the speed is updated
+    UPROPERTY(EditAnywhere, Category = "Base PlayerController|Settings")
+    float TimeDilationSpeed;
+
     //The tile that is currently selected
     UPROPERTY(VisibleAnywhere, Category = "Base PlayerController|Tower Placement")
     FIntPoint CurrentTile;
