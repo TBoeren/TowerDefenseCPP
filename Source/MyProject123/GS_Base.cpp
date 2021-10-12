@@ -8,7 +8,7 @@ void AGS_Base::BeginPlay()
 
     //get the resources gained upon death
     static const FString ContextString(TEXT("Tower Data"));
-    FMatchStats *MatchStats = LevelData->FindRow<FMatchStats>(FName(GetWorld()->GetName()), ContextString, true);
+    FMatchStats* MatchStats = LevelData->FindRow<FMatchStats>(FName(GetWorld()->GetName()), ContextString, true);
     if (MatchStats)
     {
         //Add it to the starter resources
@@ -19,7 +19,7 @@ void AGS_Base::BeginPlay()
     //Set the current wave to 0
     AGS_Base::SetCurrentWave(0);
 
-    //And calculate the total waves and set it 
+    //And calculate the total waves and set it
     TotalWaves = AGS_Base::CalculateTotalWaves();
 }
 
@@ -27,9 +27,9 @@ void AGS_Base::StartNextWaveCountdown(int Seconds)
 {
     //Start a timer for the start next wave function
     if (GetWorldTimerManager().TimerExists(NextWaveTimer))
-	{
-		GetWorldTimerManager().ClearTimer(NextWaveTimer);
-	}
+    {
+        GetWorldTimerManager().ClearTimer(NextWaveTimer);
+    }
 
     GetWorldTimerManager().SetTimer(NextWaveTimer, this, &AGS_Base::StartNextWave, (float)Seconds, false);
 
@@ -40,10 +40,10 @@ void AGS_Base::StartNextWaveCountdown(int Seconds)
 void AGS_Base::StartNextWave()
 {
     //Once all is prepared, start the enemyspawners
-    for(AActor* EnemySpawner : AllEnemySpawners)
+    for (AActor* EnemySpawner : AllEnemySpawners)
     {
         II_EnemySpawner* EnemySpawnerInterface = Cast<II_EnemySpawner>(EnemySpawner);
-        if(EnemySpawnerInterface)
+        if (EnemySpawnerInterface)
         {
             EnemySpawnerInterface->StartNextWave();
             SetTotalUnitsInWave(EnemySpawnerInterface->CalculateTotalEnemies());
@@ -51,12 +51,12 @@ void AGS_Base::StartNextWave()
     }
 }
 
-void AGS_Base::SetGrid(AActor *Grid)
+void AGS_Base::SetGrid(AActor* Grid)
 {
     TowerGrids.Add(Grid);
 }
 
-void AGS_Base::GetGrids(TArray<AActor *> &Grids)
+void AGS_Base::GetGrids(TArray<AActor*>& Grids)
 {
     Grids = TowerGrids;
 }
@@ -66,7 +66,7 @@ void AGS_Base::SetEnemyGoal(FVector EnemyGoal)
     EnemyTargetGoal = EnemyGoal;
 }
 
-void AGS_Base::GetEnemyGoal(FVector &EnemyGoal)
+void AGS_Base::GetEnemyGoal(FVector& EnemyGoal)
 {
     EnemyGoal = EnemyTargetGoal;
 }
@@ -107,7 +107,7 @@ TArray<FName> AGS_Base::GetAvailableTowers_Implementation()
 {
     TArray<FName> temp;
     static const FString ContextString(TEXT("Tower Data"));
-    FMatchStats *MatchStats = LevelData->FindRow<FMatchStats>(FName(GetWorld()->GetName()), ContextString, true);
+    FMatchStats* MatchStats = LevelData->FindRow<FMatchStats>(FName(GetWorld()->GetName()), ContextString, true);
     if (MatchStats)
     {
         return MatchStats->AvailableTowers;
@@ -119,14 +119,14 @@ TArray<FName> AGS_Base::GetAvailableTowers_Implementation()
 void AGS_Base::SetCurrentWave(int Wave)
 {
     CurrentWave = Wave;
-    if(CurrentWave == TotalWaves)
+    if (CurrentWave == TotalWaves)
     {
         OnAllWavesCompleted.Broadcast(CurrentWave);
     }
-    else if(CurrentWave == 0)
+    else if (CurrentWave == 0)
     {
         OnCurrentWaveUpdated.Broadcast(CurrentWave);
-    } 
+    }
     else
     {
         StartNextWaveCountdown(10);
@@ -138,7 +138,7 @@ void AGS_Base::SetTotalUnitsInWave(int TotalUnits)
 {
     TotalUnitsInWave += TotalUnits;
 
-    if(IsWaveOver())
+    if (IsWaveOver())
     {
         SetCurrentWave((CurrentWave + 1));
     }
@@ -146,7 +146,7 @@ void AGS_Base::SetTotalUnitsInWave(int TotalUnits)
 
 bool AGS_Base::IsWaveOver()
 {
-    if(TotalUnitsInWave == 0)
+    if (TotalUnitsInWave == 0)
     {
         return true;
     }
@@ -161,26 +161,28 @@ int AGS_Base::CalculateTotalWaves()
     int LTotalWaves = 0;
     TArray<AActor*> FoundActors;
 
+    //Get all the enemy spawners in the level and add it to the FoundActors array
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActors);
 
-    for(AActor* Actor : FoundActors)
-    {             
+    //Go through all the enemy spawners and find the one with the most amount of waves. That amount will be set as the TotalWaves
+    for (AActor* Actor : FoundActors)
+    {
         //Add the spawner to an array for future use
         AllEnemySpawners.Add(Actor);
 
         int LRowLength = 0;
         II_EnemySpawner* EnemySpawnerInterface = Cast<II_EnemySpawner>(Actor);
-        if(EnemySpawnerInterface)
+        if (EnemySpawnerInterface)
         {
             LRowLength = EnemySpawnerInterface->GetTotalWavesInSpawner();
-        }       
+        }
 
-        if(LRowLength > LTotalWaves)
+        if (LRowLength > LTotalWaves)
         {
             LTotalWaves = LRowLength;
         }
     }
-    
+
     return LTotalWaves;
 }
 
@@ -196,7 +198,8 @@ int AGS_Base::GetTotalWaves_Implementation()
 
 bool AGS_Base::FirstTowerPlaced()
 {
-    if(!FirstTower)
+    //If the first tower is placed, only then start the countdown for the first wave
+    if (!FirstTower)
     {
         FirstTower = true;
         StartNextWaveCountdown(10);

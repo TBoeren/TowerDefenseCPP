@@ -11,7 +11,7 @@
 APA_Base::APA_Base()
 {
     // Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-    PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bCanEverTick = true;
 
     //Create the bounds collision
     BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Bounds Collision"));
@@ -50,33 +50,30 @@ void APA_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void APA_Base::EdgeScrollCamera(FVector2D XYValue)
 {
+    //Add a local offset to the box collision to move it
     FHitResult* LHitResult = nullptr;
-    BoxCollision->AddLocalOffset(FVector(XYValue.X, XYValue.Y, 0), true, LHitResult,ETeleportType::None);
+    BoxCollision->AddLocalOffset(FVector(XYValue.X, XYValue.Y, 0), true, LHitResult, ETeleportType::None);
 }
 
 void APA_Base::UpdateCameraBoomLength(float Value)
 {
-    TargetCameraBoomLength = FMath::Clamp((CameraBoom->TargetArmLength + Value), MinCameraBoomLength, MaxCameraBoomLength);
+    float TargetCameraBoomLength = FMath::Clamp((CameraBoom->TargetArmLength + Value), MinCameraBoomLength, MaxCameraBoomLength);
 
-    if(GetWorldTimerManager().TimerExists(CameraZoomTimer))
+    if (!GetWorldTimerManager().TimerExists(CameraZoomTimer))
     {
-        if(GetWorldTimerManager().IsTimerPaused(CameraZoomTimer))
-        {
-            GetWorldTimerManager().UnPauseTimer(CameraZoomTimer);
-        }
-    }
-    else
-    {
-        GetWorldTimerManager().SetTimer(CameraZoomTimer, this, &APA_Base::SetCameraBoomLength, 0.01, true);
+        //Set the target arm length information in the timer delegate
+        FTimerDelegate TimerDelegate;
+        TimerDelegate.BindUFunction(this, FName("SetCameraBoomLength"), TargetCameraBoomLength);
+        GetWorldTimerManager().SetTimer(CameraZoomTimer, TimerDelegate, 0.01, true);
     }
 }
 
-void APA_Base::SetCameraBoomLength()
+void APA_Base::SetCameraBoomLength(float TargetArmLength)
 {
-    CameraBoom->TargetArmLength = FMath::FInterpConstantTo(CameraBoom->TargetArmLength, TargetCameraBoomLength, GetWorld()->DeltaTimeSeconds, 300);
+    CameraBoom->TargetArmLength = FMath::FInterpConstantTo(CameraBoom->TargetArmLength, TargetArmLength, GetWorld()->DeltaTimeSeconds, 300);
 
-    if(CameraBoom->TargetArmLength == TargetCameraBoomLength)
+    if (CameraBoom->TargetArmLength == TargetArmLength)
     {
-        GetWorldTimerManager().PauseTimer(CameraZoomTimer);
+        GetWorldTimerManager().ClearTimer(CameraZoomTimer);
     }
 }

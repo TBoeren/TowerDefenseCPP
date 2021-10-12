@@ -2,40 +2,37 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "CoreMinimal.h"
+#include "GS_Base.h"
+#include "GameFramework/Actor.h"
 #include "I_BaseGameState.h"
 #include "I_Enemy.h"
-#include "GS_Base.h"
 #include "EnemyGoal.generated.h"
 
 UCLASS()
 class MYPROJECT123_API AEnemyGoal : public AActor
 {
-	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AEnemyGoal();
+    GENERATED_BODY()
+
+public:
+    // Sets default values for this actor's properties
+    AEnemyGoal();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
 
-	UFUNCTION()
-	virtual void OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    //When an actor overlaps with the box component
+    UFUNCTION()
+    virtual void OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY()
-	FVector EnemyGoal;
+    //The location that the enemy will move to on spawn
+    UPROPERTY()
+    FVector EnemyGoal;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(VisibleAnywhere)
-	class UBoxComponent* BoxCollision;
-
-	
-
+public:
+    //Used to check for overlapping enemy actors
+    UPROPERTY(VisibleAnywhere, Category = "Enemy Goal")
+    class UBoxComponent* BoxCollision;
 };

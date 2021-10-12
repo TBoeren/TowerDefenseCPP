@@ -10,7 +10,7 @@
 UINTERFACE(MinimalAPI)
 class UI_BasePawn : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 /**
@@ -18,14 +18,15 @@ class UI_BasePawn : public UInterface
  */
 class MYPROJECT123_API II_BasePawn
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+    // Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+    //Moves the camera based on the position of the mouse
+    UFUNCTION()
+    virtual void EdgeScrollCamera(FVector2D XYValue) = 0;
 
-UFUNCTION()
-virtual void EdgeScrollCamera(FVector2D XYValue) = 0; //c++ version
-
-UFUNCTION()
-virtual void UpdateCameraBoomLength(float Value) = 0; 
+    //Updates the length of the camera boom based on the float value
+    UFUNCTION()
+    virtual void UpdateCameraBoomLength(float Value) = 0;
 };

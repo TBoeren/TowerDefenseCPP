@@ -12,12 +12,11 @@
 UCLASS()
 class MYPROJECT123_API ATowerBaseAOE : public ATowerBase
 {
-	GENERATED_BODY()
-	
-	virtual void ApplyDamage() override;
+    GENERATED_BODY()
 
-	public:
+    virtual void ApplyDamage() override;
 
-	UPROPERTY(EditAnywhere, Category = "AOE Tower|Settings")
-	bool AttackOriginSelf;
+public:
+    UPROPERTY(EditAnywhere, Category = "AOE Tower|Settings")
+    bool AttackOriginSelf;
 };

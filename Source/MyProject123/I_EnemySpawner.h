@@ -10,7 +10,7 @@
 UINTERFACE(MinimalAPI)
 class UI_EnemySpawner : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 /**
@@ -18,13 +18,19 @@ class UI_EnemySpawner : public UInterface
  */
 class MYPROJECT123_API II_EnemySpawner
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+    // Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+    //Get the amount of waves within the spawner
+    UFUNCTION()
+    virtual int GetTotalWavesInSpawner() = 0;
 
-	virtual int GetTotalWavesInSpawner() = 0;
-	virtual void StartNextWave() = 0;
-	virtual int CalculateTotalEnemies() = 0;
+    //Start the next wave in the spawner
+    UFUNCTION()
+    virtual void StartNextWave() = 0;
 
+    //Calculate the total amount of enemies within the wave
+    UFUNCTION()
+    virtual int CalculateTotalEnemies() = 0;
 };

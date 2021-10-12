@@ -11,43 +11,48 @@
 UCLASS()
 class MYPROJECT123_API APA_Base : public APawn, public II_BasePawn
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
-	APA_Base();
+    // Sets default values for this pawn's properties
+    APA_Base();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
 
-	void SetCameraBoomLength();
+    //A function to interp the length of the camera boom
+    UFUNCTION()
+    void SetCameraBoomLength(float TargetArmLength);
 
-	UPROPERTY(EditAnywhere, Category = "Base Player Pawn|Settings")
-	float MinCameraBoomLength;
+    //The minimum level of zoom
+    UPROPERTY(EditAnywhere, Category = "Base Player Pawn|Settings")
+    float MinCameraBoomLength;
 
-	UPROPERTY(EditAnywhere, Category = "Base Player Pawn|Settings")
-	float MaxCameraBoomLength;
+    //The maximum level of zoom
+    UPROPERTY(EditAnywhere, Category = "Base Player Pawn|Settings")
+    float MaxCameraBoomLength;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Base Player Pawn|Camera")
-	float TargetCameraBoomLength;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Base Player Pawn|Camera")
-	FTimerHandle CameraZoomTimer;
+    UPROPERTY(BlueprintReadWrite, Category = "Base Player Pawn|Camera")
+    FTimerHandle CameraZoomTimer;
 
 public:
-	// Called to bind functionality to input
+    // Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
-	UPROPERTY(VisibleAnywhere)
-	class UBoxComponent *BoxCollision;
+    //Collision box used to constrain the camera in the level
+    UPROPERTY(VisibleAnywhere, Category = "Base Player Pawn")
+    class UBoxComponent* BoxCollision;
 
-	UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent *CameraBoom;
+    //Camera boom used for zooming the camera
+    UPROPERTY(VisibleAnywhere, Category = "Base Player Pawn|Camera")
+    class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent *TopDownCamera;
+    //Main Camera
+    UPROPERTY(VisibleAnywhere, Category = "Base Player Pawn|Camera")
+    class UCameraComponent* TopDownCamera;
 
-	virtual void EdgeScrollCamera(FVector2D XYValue) override; //c++ implementation for BP look into _Implementation
-	virtual void UpdateCameraBoomLength(float Value) override;
+    //Interface functions
+    virtual void EdgeScrollCamera(FVector2D XYValue) override;
+    virtual void UpdateCameraBoomLength(float Value) override;
 };

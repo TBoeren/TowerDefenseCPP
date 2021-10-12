@@ -8,7 +8,7 @@
 ATowerBase::ATowerBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
 	//Create the attack range 
     SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Range Collision"));
@@ -77,13 +77,6 @@ void ATowerBase::OnOverlapEnd(class UPrimitiveComponent* newComp, class AActor* 
 	{
 		GetWorldTimerManager().ClearTimer(AttackTimer);
 	}
-}
-
-// Called every frame
-void ATowerBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ATowerBase::ApplyDamage()

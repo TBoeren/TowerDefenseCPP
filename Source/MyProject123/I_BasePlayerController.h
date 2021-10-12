@@ -10,7 +10,7 @@
 UINTERFACE(MinimalAPI)
 class UI_BasePlayerController : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 /**
@@ -18,16 +18,19 @@ class UI_BasePlayerController : public UInterface
  */
 class MYPROJECT123_API II_BasePlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+    // Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
-	void PassTowerToConstruct(FName TowerRowName);
+    //A blueprint callable funtion that passes row name of the tower to construct
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
+    void PassTowerToConstruct(FName TowerRowName);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
-	void PassTowerRange(FName TowerRowName);
+    //A blueprint callable funtion that passes row name of the tower to retrieve the range from
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
+    void PassTowerRange(FName TowerRowName);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
-	void PassTowerSell(FName TowerRowName, AActor* TowerToSell);
+    //A blueprint callable funtion that passes row name of the tower to retrieve cost from and passes the tower actor to be sold
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tower Placement")
+    void PassTowerSell(FName TowerRowName, AActor* TowerToSell);
 };

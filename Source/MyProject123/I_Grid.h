@@ -10,7 +10,7 @@
 UINTERFACE(MinimalAPI)
 class UI_Grid : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
 /**
@@ -18,34 +18,43 @@ class UI_Grid : public UInterface
  */
 class MYPROJECT123_API II_Grid
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+    // Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION()
-	virtual bool LocationToTile (FVector Location, bool BuildingSelected, int &Row, int &Column) = 0;
+    //Convert the given location to tile coordinates
+    UFUNCTION()
+    virtual bool LocationToTile(FVector Location, bool BuildingSelected, int& Row, int& Column) = 0;
 
-	UFUNCTION()
-	virtual bool TileToGridLocation(int Row, int Column, bool Center, FVector2D &GridLocation) = 0;
+    //Convert the tile coordinates to a location
+    UFUNCTION()
+    virtual bool TileToGridLocation(int Row, int Column, bool Center, FVector2D& GridLocation) = 0;
 
-	UFUNCTION()
-	virtual void SetSelectedTile(int Row, int Column) = 0;
+    //Set the currently hovered/selected tile
+    UFUNCTION()
+    virtual void SetSelectedTile(int Row, int Column) = 0;
 
-	UFUNCTION()
-	virtual bool TileIsValid(int Row, int Column, bool BuildingSelected) = 0;
+    //Check if the current location is valid on the grid
+    UFUNCTION()
+    virtual bool TileIsValid(int Row, int Column, bool BuildingSelected) = 0;
 
-	UFUNCTION()
-	virtual void AddOccupiedTile(FIntPoint Tile, ATowerBase* Tower) = 0;
+    //Add the selected tile to the occupied tile TMap
+    UFUNCTION()
+    virtual void AddOccupiedTile(FIntPoint Tile, ATowerBase* Tower) = 0;
 
-	UFUNCTION()
-	virtual void ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct) = 0;
+    //Construct the given tower
+    UFUNCTION()
+    virtual void ConstructTower(TSubclassOf<ATowerBase> TowerToConstruct) = 0;
 
-	UFUNCTION()
-	virtual void ConstructRangeDecal(float TowerRange) = 0;
+    //Construct the range decal based on the passed float
+    UFUNCTION()
+    virtual void ConstructRangeDecal(float TowerRange) = 0;
 
-	UFUNCTION()
-	virtual void DestroyRangeDecal() = 0;
+    //Destroy the ranged decal
+    UFUNCTION()
+    virtual void DestroyRangeDecal() = 0;
 
-	UFUNCTION()
-	virtual void SellTower(AActor* TowerToSell) = 0;
+    //Sell the selected tower
+    UFUNCTION()
+    virtual void SellTower(AActor* TowerToSell) = 0;
 };
