@@ -50,20 +50,20 @@ void ATowerBase::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor
 	EnemiesInRange.Add(OtherActor);
 
 	//And start the timer if it is not running
-	if(GetWorldTimerManager().TimerExists(AttackTimer))
-    {
-        if(GetWorldTimerManager().IsTimerPaused(AttackTimer))
-        {
-            GetWorldTimerManager().UnPauseTimer(AttackTimer);
-        }
-    }
-    else
+	if(!GetWorldTimerManager().TimerExists(AttackTimer))
     {
 		//Get the attack rate from the data table
 		static const FString ContextString(TEXT("Tower Data"));
 		FTowerStats* TowerStats = TowerData->FindRow<FTowerStats>(FName(RowName), ContextString, true);
 
         GetWorldTimerManager().SetTimer(AttackTimer, this, &ATowerBase::ApplyDamage, TowerStats->TowerAttackSpeed, true);
+
+		//Set the move information in the timer delegate
+		GetWorldTimerManager().ClearTimer(RotationTimer);
+        FTimerDelegate TimerDelegate;
+        TimerDelegate.BindUFunction(this, FName("StartRotationTimer"), false);
+
+		GetWorldTimerManager().SetTimer(RotationTimer, TimerDelegate, 0.01f, true);
     }
 }
 
@@ -76,7 +76,45 @@ void ATowerBase::OnOverlapEnd(class UPrimitiveComponent* newComp, class AActor* 
 	if(EnemiesInRange.Num() == 0)
 	{
 		GetWorldTimerManager().ClearTimer(AttackTimer);
+
+		//Clear a time and start a new one to reset the rotation
+		GetWorldTimerManager().ClearTimer(RotationTimer);
+        FTimerDelegate TimerDelegate;
+        TimerDelegate.BindUFunction(this, FName("StartRotationTimer"), true);
+
+		GetWorldTimerManager().SetTimer(RotationTimer, TimerDelegate, 0.01f, true);
 	}
+}
+
+void ATowerBase::StartRotationTimer_Implementation(bool Return)
+{
+	//Done in BP
+}
+
+void ATowerBase::UpdateTowerBaseRotation(UStaticMeshComponent* WeaponToRotate, bool Return)
+{
+    if (Return)
+    {
+		WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), FRotator(0,0,0), GetWorld()->DeltaTimeSeconds, 125.f));
+
+		if(WeaponToRotate->GetRelativeRotation() == FRotator(0,0,0))
+		{
+			GetWorldTimerManager().ClearTimer(RotationTimer);
+		}
+    }
+    else
+    {
+        FVector TargetLocation = EnemiesInRange[0]->GetActorLocation();
+        FVector BallistaBaseLocation = WeaponToRotate->GetComponentLocation();
+
+        FVector Direction = TargetLocation - BallistaBaseLocation;
+        GetActorTransform().InverseTransformVectorNoScale(Direction);
+
+        FRotator TargetRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+        TargetRotation = FRotator(0, (TargetRotation.Yaw - 90), 0);
+
+        WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), TargetRotation, GetWorld()->DeltaTimeSeconds, 125.f));
+    }
 }
 
 void ATowerBase::ApplyDamage()

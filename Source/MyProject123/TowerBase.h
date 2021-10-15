@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/Actor.h"
@@ -88,9 +89,21 @@ protected:
     UPROPERTY(BlueprintReadWrite, Category = "Tower Base|Attacking")
     FTimerHandle AttackTimer;
 
+    //The timer responsable for updating the rotation of the tower
+    UPROPERTY(BlueprintReadWrite, Category = "Tower Base|Attacking")
+    FTimerHandle RotationTimer;
+
     //Function that applies damage to the enemy
     UFUNCTION()
     virtual void ApplyDamage();
+
+    //Function returns the weapon base that will be rotated
+    UFUNCTION(BlueprintCallable)
+    void UpdateTowerBaseRotation(UStaticMeshComponent* WeaponToRotate, bool Return);
+
+    //Function to call by the timer 
+    UFUNCTION(BlueprintNativeEvent)
+    void StartRotationTimer(bool Return);
 
 public:
     //Sphere collision that is used to represent the range of the tower
@@ -104,6 +117,10 @@ public:
     //Decal used to show the range of the tower to the player
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tower Base")
     class UDecalComponent* RangeDecal;
+
+    //The mesh that will be rotated to face the enemy
+    UPROPERTY(EditAnywhere, Category = "Tower Base|Attacking")
+    class UStaticMeshComponent* WeaponBase;
 
     //The row name that is used to retrieve the tower stats from the data table
     UPROPERTY(EditAnywhere, Category = "Tower Base")
