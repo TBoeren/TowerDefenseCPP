@@ -58,11 +58,17 @@ void ATowerBase::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor
 
         GetWorldTimerManager().SetTimer(AttackTimer, this, &ATowerBase::ApplyDamage, TowerStats->TowerAttackSpeed, true);
 
+		if(!GetWorldTimerManager().TimerExists(AttackTimer))
+		{
+			//Clear the rotation timer if it exists
+			GetWorldTimerManager().ClearTimer(RotationTimer);
+		}
+
 		//Set the move information in the timer delegate
-		GetWorldTimerManager().ClearTimer(RotationTimer);
         FTimerDelegate TimerDelegate;
         TimerDelegate.BindUFunction(this, FName("StartRotationTimer"), false);
 
+		//Call the rotation timer to aim the weapon on the tower towards the enemy
 		GetWorldTimerManager().SetTimer(RotationTimer, TimerDelegate, 0.01f, true);
     }
 }
@@ -77,7 +83,7 @@ void ATowerBase::OnOverlapEnd(class UPrimitiveComponent* newComp, class AActor* 
 	{
 		GetWorldTimerManager().ClearTimer(AttackTimer);
 
-		//Clear a time and start a new one to reset the rotation
+		//Clear the timer and rotate the camera back to the start rotation
 		GetWorldTimerManager().ClearTimer(RotationTimer);
         FTimerDelegate TimerDelegate;
         TimerDelegate.BindUFunction(this, FName("StartRotationTimer"), true);
@@ -95,25 +101,31 @@ void ATowerBase::UpdateTowerBaseRotation(UStaticMeshComponent* WeaponToRotate, b
 {
     if (Return)
     {
-		WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), FRotator(0,0,0), GetWorld()->DeltaTimeSeconds, 125.f));
+		//Rotate the camera back to the start rotation
+		WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), FRotator(0,0,0), GetWorld()->DeltaTimeSeconds, CameraRotationSpeed));
 
 		if(WeaponToRotate->GetRelativeRotation() == FRotator(0,0,0))
 		{
+			//Stop rotating once reset
 			GetWorldTimerManager().ClearTimer(RotationTimer);
 		}
     }
     else
     {
+		//Set the target location and the weapon base location
         FVector TargetLocation = EnemiesInRange[0]->GetActorLocation();
-        FVector BallistaBaseLocation = WeaponToRotate->GetComponentLocation();
+        FVector WeaponBaseLocation = WeaponToRotate->GetComponentLocation();
 
-        FVector Direction = TargetLocation - BallistaBaseLocation;
+		//Calculate the direction to aim at 
+        FVector Direction = TargetLocation - WeaponBaseLocation;
         GetActorTransform().InverseTransformVectorNoScale(Direction);
 
+		//Convert the direction to a rotation (90 is subtracted due to the mesh import settings)
         FRotator TargetRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
         TargetRotation = FRotator(0, (TargetRotation.Yaw - 90), 0);
 
-        WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), TargetRotation, GetWorld()->DeltaTimeSeconds, 125.f));
+		//Interp the weapon base to aim at the enemy
+        WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), TargetRotation, GetWorld()->DeltaTimeSeconds, CameraRotationSpeed));
     }
 }
 

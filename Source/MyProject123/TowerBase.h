@@ -89,9 +89,12 @@ protected:
     UPROPERTY(BlueprintReadWrite, Category = "Tower Base|Attacking")
     FTimerHandle AttackTimer;
 
-    //The timer responsable for updating the rotation of the tower
+    //The timer responsable for updating the rotation of the towers weapon (if applicable)
     UPROPERTY(BlueprintReadWrite, Category = "Tower Base|Attacking")
     FTimerHandle RotationTimer;
+
+    UPROPERTY(EditAnywhere, Category = "Tower Base|Settings")
+    float CameraRotationSpeed;
 
     //Function that applies damage to the enemy
     UFUNCTION()
@@ -101,7 +104,7 @@ protected:
     UFUNCTION(BlueprintCallable)
     void UpdateTowerBaseRotation(UStaticMeshComponent* WeaponToRotate, bool Return);
 
-    //Function to call by the timer 
+    //Function to be called by the rotation timer 
     UFUNCTION(BlueprintNativeEvent)
     void StartRotationTimer(bool Return);
 
