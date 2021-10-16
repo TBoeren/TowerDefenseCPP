@@ -8,6 +8,7 @@
 #include "Engine/DataTable.h"
 #include "GameFramework/Actor.h"
 #include "TimerManager.h"
+#include "TowerProjectile.h"
 #include "TowerBase.generated.h"
 
 USTRUCT(BlueprintType)
@@ -82,7 +83,7 @@ protected:
     class UDataTable* TowerData;
 
     //The current enemies in range of the tower
-    UPROPERTY(EditAnywhere, Category = "Tower Base|Attacking")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Tower Base|Attacking")
     TArray<AActor*> EnemiesInRange;
 
     //The timer responsable for calling the apply damage function
@@ -93,8 +94,21 @@ protected:
     UPROPERTY(BlueprintReadWrite, Category = "Tower Base|Attacking")
     FTimerHandle RotationTimer;
 
+    //The timer responsable for firing the towers projectile ammo (if applicable)
+    UPROPERTY(BlueprintReadWrite, Category = "Tower Base|Attacking")
+    FTimerHandle ProjectileVisualTimer;
+
+    //The speed at which the tower weapon rotates (If applicable)
     UPROPERTY(EditAnywhere, Category = "Tower Base|Settings")
-    float CameraRotationSpeed;
+    float WeaponBaseRotationSpeed;
+
+    //The speed at which the tower projectile fires. This needs to be equal to the initial speed of the assigned projectile (If applicable)
+    UPROPERTY(EditAnywhere, Category = "Tower Base|Settings")
+    float ProjectileSpeed;
+
+    //The actor class of the tower projectile that will be used
+    UPROPERTY(EditAnywhere, Category = "Tower Base|Projectile")
+    TSubclassOf<ATowerProjectile> TowerProjectile;
 
     //Function that applies damage to the enemy
     UFUNCTION()
@@ -107,6 +121,14 @@ protected:
     //Function to be called by the rotation timer 
     UFUNCTION(BlueprintNativeEvent)
     void StartRotationTimer(bool Return);
+
+    //Function returns the weapon base that will be rotated
+    UFUNCTION(BlueprintCallable)
+    void CreateTowerAttackVisual(FVector ProjectileOrigin);
+
+    //Function to be called by the rotation timer 
+    UFUNCTION(BlueprintNativeEvent)
+    void FireTowerAttackVisual();
 
 public:
     //Sphere collision that is used to represent the range of the tower

@@ -2,6 +2,7 @@
 #include "TowerBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DecalActor.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Components/DecalComponent.h"
 
 // Sets default values
@@ -70,6 +71,9 @@ void ATowerBase::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor
 
 		//Call the rotation timer to aim the weapon on the tower towards the enemy
 		GetWorldTimerManager().SetTimer(RotationTimer, TimerDelegate, 0.01f, true);
+
+		//Start the timer for the projectile visual
+		GetWorldTimerManager().SetTimer(ProjectileVisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - 0.15f), false); //TODO FInd a better way to time the visual
     }
 }
 
@@ -89,6 +93,9 @@ void ATowerBase::OnOverlapEnd(class UPrimitiveComponent* newComp, class AActor* 
         TimerDelegate.BindUFunction(this, FName("StartRotationTimer"), true);
 
 		GetWorldTimerManager().SetTimer(RotationTimer, TimerDelegate, 0.01f, true);
+
+		//Start the timer for the projectile visual
+		GetWorldTimerManager().ClearTimer(ProjectileVisualTimer);
 	}
 }
 
@@ -102,7 +109,7 @@ void ATowerBase::UpdateTowerBaseRotation(UStaticMeshComponent* WeaponToRotate, b
     if (Return)
     {
 		//Rotate the camera back to the start rotation
-		WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), FRotator(0,0,0), GetWorld()->DeltaTimeSeconds, CameraRotationSpeed));
+		WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), FRotator(0,0,0), GetWorld()->DeltaTimeSeconds, WeaponBaseRotationSpeed));
 
 		if(WeaponToRotate->GetRelativeRotation() == FRotator(0,0,0))
 		{
@@ -125,8 +132,28 @@ void ATowerBase::UpdateTowerBaseRotation(UStaticMeshComponent* WeaponToRotate, b
         TargetRotation = FRotator(0, (TargetRotation.Yaw - 90), 0);
 
 		//Interp the weapon base to aim at the enemy
-        WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), TargetRotation, GetWorld()->DeltaTimeSeconds, CameraRotationSpeed));
+        WeaponToRotate->SetRelativeRotation(FMath::RInterpConstantTo(WeaponToRotate->GetRelativeRotation(), TargetRotation, GetWorld()->DeltaTimeSeconds, WeaponBaseRotationSpeed));
     }
+}
+
+void ATowerBase::CreateTowerAttackVisual(FVector ProjectileOrigin)
+{
+	//Create the local variable
+	FVector PredictedEnemyPosition = EnemiesInRange[0]->GetActorLocation() + (EnemiesInRange[0]->GetVelocity() * (GetDistanceTo(EnemiesInRange[0]) / ProjectileSpeed));
+
+	//Get the rotation to fire at
+	FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(ProjectileOrigin, PredictedEnemyPosition);
+
+	//Spawn the projectile at the correct location and rotation
+	FTransform SpawnTransform = FTransform(SpawnRotation, ProjectileOrigin, FVector::OneVector);
+	FActorSpawnParameters SpawnInfo;
+    SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    ATowerProjectile* TowerTemp = GetWorld()->SpawnActor<ATowerProjectile>(TowerProjectile, SpawnTransform, SpawnInfo);
+}
+
+void ATowerBase::FireTowerAttackVisual_Implementation()
+{
+	//Done in BP
 }
 
 void ATowerBase::ApplyDamage()
@@ -137,4 +164,7 @@ void ATowerBase::ApplyDamage()
 
 	//Call the apply damage on the first entry in the array, make that the target and passing the tower damage from the data table
 	UGameplayStatics::ApplyDamage(EnemiesInRange[0], TowerStats->TowerDamage, nullptr, this, nullptr);
+
+	//Start the timer for the projectile visual
+	GetWorldTimerManager().SetTimer(ProjectileVisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - 0.15f), false);
 }
