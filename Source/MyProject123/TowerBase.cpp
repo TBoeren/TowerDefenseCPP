@@ -73,7 +73,7 @@ void ATowerBase::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor
 		GetWorldTimerManager().SetTimer(RotationTimer, TimerDelegate, 0.01f, true);
 
 		//Start the timer for the projectile visual
-		GetWorldTimerManager().SetTimer(ProjectileVisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - 0.15f), false); //TODO FInd a better way to time the visual
+		GetWorldTimerManager().SetTimer(VisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - VisualTime), false); //TODO FInd a better way to time the visual
     }
 }
 
@@ -95,7 +95,7 @@ void ATowerBase::OnOverlapEnd(class UPrimitiveComponent* newComp, class AActor* 
 		GetWorldTimerManager().SetTimer(RotationTimer, TimerDelegate, 0.01f, true);
 
 		//Start the timer for the projectile visual
-		GetWorldTimerManager().ClearTimer(ProjectileVisualTimer);
+		GetWorldTimerManager().ClearTimer(VisualTimer);
 	}
 }
 
@@ -165,6 +165,10 @@ void ATowerBase::ApplyDamage()
 	//Call the apply damage on the first entry in the array, make that the target and passing the tower damage from the data table
 	UGameplayStatics::ApplyDamage(EnemiesInRange[0], TowerStats->TowerDamage, nullptr, this, nullptr);
 
-	//Start the timer for the projectile visual
-	GetWorldTimerManager().SetTimer(ProjectileVisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - 0.15f), false);
+	//Check if the array is not empty. If it is, stop creating the visual
+	if(!EnemiesInRange.Num() == 0)
+	{
+		//Start the timer for the projectile visual
+		GetWorldTimerManager().SetTimer(VisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - VisualTime), false);
+	}
 }

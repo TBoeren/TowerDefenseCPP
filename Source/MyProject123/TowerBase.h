@@ -96,7 +96,7 @@ protected:
 
     //The timer responsable for firing the towers projectile ammo (if applicable)
     UPROPERTY(BlueprintReadWrite, Category = "Tower Base|Attacking")
-    FTimerHandle ProjectileVisualTimer;
+    FTimerHandle VisualTimer;
 
     //The speed at which the tower weapon rotates (If applicable)
     UPROPERTY(EditAnywhere, Category = "Tower Base|Settings")
@@ -105,6 +105,10 @@ protected:
     //The speed at which the tower projectile fires. This needs to be equal to the initial speed of the assigned projectile (If applicable)
     UPROPERTY(EditAnywhere, Category = "Tower Base|Settings")
     float ProjectileSpeed;
+
+    //The time before the attack that the visual will appear
+    UPROPERTY(EditAnywhere, Category = "Tower Base|Settings")
+    float VisualTime;
 
     //The actor class of the tower projectile that will be used
     UPROPERTY(EditAnywhere, Category = "Tower Base|Projectile")
@@ -125,10 +129,6 @@ protected:
     //Function returns the weapon base that will be rotated
     UFUNCTION(BlueprintCallable)
     void CreateTowerAttackVisual(FVector ProjectileOrigin);
-
-    //Function to be called by the rotation timer 
-    UFUNCTION(BlueprintNativeEvent)
-    void FireTowerAttackVisual();
 
 public:
     //Sphere collision that is used to represent the range of the tower
@@ -154,4 +154,8 @@ public:
     //The range decal material
     UPROPERTY(EditAnywhere, Category = "Tower Base")
     UMaterialInterface* RangeDecalMaterial;
+
+    //Function to be called by the visual timer 
+    UFUNCTION(BlueprintNativeEvent)
+    void FireTowerAttackVisual();
 };

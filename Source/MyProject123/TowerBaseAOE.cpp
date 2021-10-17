@@ -17,8 +17,15 @@ void ATowerBaseAOE::ApplyDamage()
         TArray<AActor*> ActorsToIgnore;
         UGameplayStatics::ApplyRadialDamage(GetWorld(), TowerStats->TowerDamage, GetActorLocation(), TowerStats->TowerAOERadius, nullptr, ActorsToIgnore, this, nullptr, true, ECollisionChannel::ECC_Visibility);
 
-        //Create a visual for the AOE
-        DrawDebugSphere(GetWorld(), GetActorLocation(), TowerStats->TowerAOERadius, 10, FColor::Black, false, 5.f);
+        //Create a debug visual for the AOE TODO remove when needed
+        //DrawDebugSphere(GetWorld(), GetActorLocation(), TowerStats->TowerAOERadius, 10, FColor::Black, false, 5.f);
+
+        //Check if the array is not empty. If it is, stop creating the visual
+        if (!EnemiesInRange.Num() == 0)
+        {
+            //Start the timer for the projectile visual
+            GetWorldTimerManager().SetTimer(VisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - VisualTime), false);
+        }
     }
     else
     {
@@ -27,7 +34,14 @@ void ATowerBaseAOE::ApplyDamage()
         TArray<AActor*> ActorsToIgnore;
         UGameplayStatics::ApplyRadialDamage(GetWorld(), TowerStats->TowerDamage, EnemiesInRange[0]->GetActorLocation(), TowerStats->TowerAOERadius, nullptr, ActorsToIgnore, this, nullptr, true, ECollisionChannel::ECC_Visibility);
 
-        //Create a visual for the AOE
-        DrawDebugSphere(GetWorld(), EnemiesInRange[0]->GetActorLocation(), TowerStats->TowerAOERadius, 10, FColor::Black, false, 5.f);
+        //Create a debug visual for the AOE
+        //DrawDebugSphere(GetWorld(), EnemiesInRange[0]->GetActorLocation(), TowerStats->TowerAOERadius, 10, FColor::Black, false, 5.f);
+
+        //Check if the array is not empty. If it is, stop creating the visual
+        if (!EnemiesInRange.Num() == 0)
+        {
+            //Start the timer for the projectile visual
+            GetWorldTimerManager().SetTimer(VisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - VisualTime), false);
+        }
     }
 }
