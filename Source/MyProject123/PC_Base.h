@@ -110,7 +110,11 @@ private:
 
     //Called when the Update speed button is pressed
     UFUNCTION()
-    void UpdateGameSpeed();
+    void IncreaseGameSpeed();
+
+    //Called when the Update speed button is released
+    UFUNCTION()
+    void ResetGameSpeed();
 
     //Checks to see if we are currently in the main menu
     UFUNCTION()

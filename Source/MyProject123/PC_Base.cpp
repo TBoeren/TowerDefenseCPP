@@ -41,8 +41,8 @@ void APC_Base::SetupInputComponent()
     InputComponent->BindAction(TEXT("SelectButton"), IE_Pressed, this, &APC_Base::OnSelectButtonDown);
     InputComponent->BindAction(TEXT("CancelButton"), IE_Pressed, this, &APC_Base::OnCancelButtonDown);
     InputComponent->BindAction(TEXT("PauseGame"), IE_Pressed, this, &APC_Base::UpdatePause).bExecuteWhenPaused = true;
-    InputComponent->BindAction(TEXT("UpdateSpeed"), IE_Pressed, this, &APC_Base::UpdateGameSpeed);
-    InputComponent->BindAction(TEXT("UpdateSpeed"), IE_Released, this, &APC_Base::UpdateGameSpeed);
+    InputComponent->BindAction(TEXT("UpdateSpeed"), IE_Pressed, this, &APC_Base::IncreaseGameSpeed);
+    InputComponent->BindAction(TEXT("UpdateSpeed"), IE_Released, this, &APC_Base::ResetGameSpeed);
 }
 
 void APC_Base::MouseMove(float Value)
@@ -201,7 +201,7 @@ void APC_Base::CameraZoomOut()
     }
 }
 
-void APC_Base::UpdateGameSpeed()
+void APC_Base::IncreaseGameSpeed()
 {
     //If you are in the main menu, don't allow the game speed to be updated
     if(APC_Base::IsInMainMenu())
@@ -209,15 +209,20 @@ void APC_Base::UpdateGameSpeed()
         return;
     }
 
-    //Update the game speed. If it is already sped up, slow it down
-    if(UGameplayStatics::GetGlobalTimeDilation(GetWorld()) > 1.f)
+    //Update the game speed.
+    UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilationSpeed);
+}
+
+void APC_Base::ResetGameSpeed()
+{
+    //If you are in the main menu, don't allow the game speed to be updated
+    if(APC_Base::IsInMainMenu())
     {
-        UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+        return;
     }
-    else
-    {
-        UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilationSpeed);
-    }
+
+    //Update the game speed.
+    UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
 }
 
 void APC_Base::UpdatePause()
