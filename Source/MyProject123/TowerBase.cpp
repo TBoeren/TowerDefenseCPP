@@ -35,8 +35,9 @@ void ATowerBase::BeginPlay()
 	FTowerStats* TowerStats = TowerData->FindRow<FTowerStats>(FName(RowName), ContextString, true);
 	if(TowerStats)
 	{
-		SphereCollision->SetSphereRadius(TowerStats->TowerRange, true);
-		RangeDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), RangeDecalMaterial, FVector(TowerStats->TowerRange, TowerStats->TowerRange, TowerStats->TowerRange), GetActorLocation(), Rotation, 0.0f);
+		CurrentTowerStats = *TowerStats;
+		SphereCollision->SetSphereRadius(CurrentTowerStats.TowerRange, true);
+		RangeDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), RangeDecalMaterial, FVector(CurrentTowerStats.TowerRange, CurrentTowerStats.TowerRange, CurrentTowerStats.TowerRange), GetActorLocation(), Rotation, 0.0f);
 	}
 
 	//Set the decal material and hide it the decal
@@ -53,11 +54,7 @@ void ATowerBase::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor
 	//And start the timer if it is not running
 	if(!GetWorldTimerManager().TimerExists(AttackTimer))
     {
-		//Get the attack rate from the data table
-		static const FString ContextString(TEXT("Tower Data"));
-		FTowerStats* TowerStats = TowerData->FindRow<FTowerStats>(FName(RowName), ContextString, true);
-
-        GetWorldTimerManager().SetTimer(AttackTimer, this, &ATowerBase::ApplyDamage, TowerStats->TowerAttackSpeed, true);
+        GetWorldTimerManager().SetTimer(AttackTimer, this, &ATowerBase::ApplyDamage, CurrentTowerStats.TowerAttackSpeed, true);
 
 		if(!GetWorldTimerManager().TimerExists(AttackTimer))
 		{
@@ -73,7 +70,7 @@ void ATowerBase::OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor
 		GetWorldTimerManager().SetTimer(RotationTimer, TimerDelegate, 0.01f, true);
 
 		//Start the timer for the projectile visual
-		GetWorldTimerManager().SetTimer(VisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - VisualTime), false); //TODO FInd a better way to time the visual
+		GetWorldTimerManager().SetTimer(VisualTimer, this, &ATowerBase::FireTowerAttackVisual, (CurrentTowerStats.TowerAttackSpeed - VisualTime), false); //TODO FInd a better way to time the visual
     }
 }
 
@@ -158,17 +155,13 @@ void ATowerBase::FireTowerAttackVisual_Implementation()
 
 void ATowerBase::ApplyDamage()
 {
-	//Get the attack damage from the data table
-	static const FString ContextString(TEXT("Tower Data"));
-	FTowerStats* TowerStats = TowerData->FindRow<FTowerStats>(FName(RowName), ContextString, true);
-
 	//Call the apply damage on the first entry in the array, make that the target and passing the tower damage from the data table
-	UGameplayStatics::ApplyDamage(EnemiesInRange[0], TowerStats->TowerDamage, nullptr, this, nullptr);
+	UGameplayStatics::ApplyDamage(EnemiesInRange[0], CurrentTowerStats.TowerDamage, nullptr, this, nullptr);
 
 	//Check if the array is not empty. If it is, stop creating the visual
 	if(!EnemiesInRange.Num() == 0)
 	{
 		//Start the timer for the projectile visual
-		GetWorldTimerManager().SetTimer(VisualTimer, this, &ATowerBase::FireTowerAttackVisual, (TowerStats->TowerAttackSpeed - VisualTime), false);
+		GetWorldTimerManager().SetTimer(VisualTimer, this, &ATowerBase::FireTowerAttackVisual, (CurrentTowerStats.TowerAttackSpeed - VisualTime), false);
 	}
 }

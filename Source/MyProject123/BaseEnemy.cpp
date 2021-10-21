@@ -22,25 +22,22 @@ void ABaseEnemy::BeginPlay()
     if (UnitStats)
     {
         //Set the variables based on the stats in the datatable
-        float UnscaledUnitHealth = UnitStats->UnitHealth;
-        UnitMoveSpeed = UnitStats->UnitMoveSpeed;
-        UnitFlatArmor = UnitStats->UnitFlatArmor;
-        UnitPercentArmor = UnitStats->UnitPercentArmor;
-        UnitHealth = (UnscaledUnitHealth / ((100 - UnitPercentArmor) / 100));
-        GetCharacterMovement()->MaxWalkSpeed = UnitMoveSpeed;
+        CurrentUnitStats = *UnitStats;
+        CurrentUnitStats.CalculateScaledHealth();
+        GetCharacterMovement()->MaxWalkSpeed = CurrentUnitStats.UnitMoveSpeed;
     }
 }
 
 float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
     //Remove damage from the unit health
-    UnitHealth -= FMath::Clamp((DamageAmount - UnitFlatArmor), 1.f, 10000.f);
+    CurrentUnitStats.UpdateHealthOnAttack(DamageAmount);
 
     //Update the units healthbar with the new health
-    ABaseEnemy::UpdateHealthBar(UnitHealth);
+    ABaseEnemy::UpdateHealthBar(CurrentUnitStats.UnitHealth);
 
     //if the HP is 0 or lower,
-    if (UnitHealth <= 0)
+    if (CurrentUnitStats.UnitHealth <= 0)
     {
         ABaseEnemy::Death(true);
     }
@@ -55,15 +52,11 @@ void ABaseEnemy::UpdateHealthBar_Implementation(float UpdatedHealth)
 
 void ABaseEnemy::Death(bool RewardResources)
 {
-    //get the resources gained upon death
-    static const FString ContextString(TEXT("Tower Data"));
-    FUnitStats* UnitStats = UnitData->FindRow<FUnitStats>(FName(RowName), ContextString, true);
-
     //Call to the game state interface and add the gained resources to the current amount, remove from total units in wave and then destroy self
     II_BaseGameState* GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
     if (GameStateInterface && RewardResources)
     {
-        GameStateInterface->SetResources(UnitStats->ResourcesGained);
+        GameStateInterface->SetResources(CurrentUnitStats.ResourcesGained);
         GameStateInterface->SetTotalUnitsInWave(-1);
         Destroy();
     }

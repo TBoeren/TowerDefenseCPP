@@ -56,9 +56,9 @@ void AGS_Base::SetGrid(AActor* Grid)
     TowerGrids.Add(Grid);
 }
 
-void AGS_Base::GetGrids(TArray<AActor*>& Grids)
+TArray<AActor*> AGS_Base::GetGrids()
 {
-    Grids = TowerGrids;
+    return TowerGrids;
 }
 
 void AGS_Base::SetEnemyGoal(FVector EnemyGoal)
@@ -66,9 +66,9 @@ void AGS_Base::SetEnemyGoal(FVector EnemyGoal)
     EnemyTargetGoal = EnemyGoal;
 }
 
-void AGS_Base::GetEnemyGoal(FVector& EnemyGoal)
+FVector AGS_Base::GetEnemyGoal()
 {
-    EnemyGoal = EnemyTargetGoal;
+    return EnemyTargetGoal;
 }
 
 void AGS_Base::SetLives(int Lives)

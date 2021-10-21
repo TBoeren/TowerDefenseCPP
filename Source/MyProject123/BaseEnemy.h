@@ -38,6 +38,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     int ResourcesGained;
+
+    void CalculateScaledHealth(){UnitHealth = (UnitHealth / ((100 - UnitPercentArmor) / 100));};
+    void UpdateHealthOnAttack(float Value){UnitHealth -= FMath::Clamp((Value - UnitFlatArmor), 1.f, 10000.f);};
 };
 
 UCLASS()
@@ -69,16 +72,7 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
     FString RowName;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
-    float UnitHealth;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
-    float UnitFlatArmor;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
-    float UnitPercentArmor;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Base Enemy|Unit Stats")
-    float UnitMoveSpeed;
+private:
+    UPROPERTY()
+    FUnitStats CurrentUnitStats;
 };

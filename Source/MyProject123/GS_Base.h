@@ -49,7 +49,7 @@ protected:
     UFUNCTION()
     void StartNextWave();
 
-public:
+private:
     //The grids that are available in the map
     UPROPERTY()
     TArray<AActor*> TowerGrids;
@@ -78,6 +78,16 @@ public:
     UPROPERTY()
     int TotalWaves;
 
+    UPROPERTY()
+    FTimerHandle NextWaveTimer;
+
+    UPROPERTY()
+    TArray<AActor*> AllEnemySpawners;
+
+    UPROPERTY()
+    bool FirstTower = false;
+
+public:
     UPROPERTY(BlueprintAssignable, Category = "Base Game State | Resources")
     FGameStateDelegate OnLivesUpdated;
 
@@ -96,23 +106,14 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "Base Game State")
     FGamePausedDelegate OnGamePaused;
 
-    UPROPERTY()
-    FTimerHandle NextWaveTimer;
-
     UPROPERTY(EditAnywhere)
     class UDataTable* LevelData;
 
-    UPROPERTY()
-    TArray<AActor*> AllEnemySpawners;
-
-    UPROPERTY()
-    bool FirstTower = false;
-
     //Interface Functions
     virtual void SetGrid(AActor* Grid) override;
-    virtual void GetGrids(TArray<AActor*>& Grids) override;
+    virtual TArray<AActor*> GetGrids() override;
     virtual void SetEnemyGoal(FVector EnemyGoal) override;
-    virtual void GetEnemyGoal(FVector& EnemyGoal) override;
+    virtual FVector GetEnemyGoal() override;
     virtual void SetLives(int Lives) override;
     virtual int GetLivesPure() override;
     int GetLives_Implementation() override;

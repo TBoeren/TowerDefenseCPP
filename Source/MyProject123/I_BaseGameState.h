@@ -28,7 +28,7 @@ public:
 
     //Get the array of grids from the game state
     UFUNCTION()
-    virtual void GetGrids(TArray<AActor*>& Grids) = 0;
+    virtual TArray<AActor*> GetGrids() = 0;
 
     //Sets the enemy goal variable in the game state
     UFUNCTION()
@@ -36,7 +36,7 @@ public:
 
     //Get the enemy goal from the game state
     UFUNCTION()
-    virtual void GetEnemyGoal(FVector& EnemyGoal) = 0;
+    virtual FVector GetEnemyGoal() = 0;
 
     //Set the amount of lives in the game state
     UFUNCTION()

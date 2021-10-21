@@ -15,7 +15,7 @@ void APC_Base::BeginPlay()
     II_BaseGameState* GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
     if (GameStateInterface)
     {
-        GameStateInterface->GetGrids(Grids);
+        Grids = GameStateInterface->GetGrids();
     }
     else
     {

@@ -27,10 +27,6 @@ protected:
     UFUNCTION()
     virtual void OnOverlapBegin(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-    //The location that the enemy will move to on spawn
-    UPROPERTY()
-    FVector EnemyGoal;
-
 public:
     //Used to check for overlapping enemy actors
     UPROPERTY(VisibleAnywhere, Category = "Enemy Goal")

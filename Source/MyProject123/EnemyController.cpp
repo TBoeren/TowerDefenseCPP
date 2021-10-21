@@ -19,8 +19,7 @@ void AEnemyController::OnPossess(APawn* InPawn)
     II_BaseGameState* GameStateInterface = Cast<II_BaseGameState>(GetWorld()->GetGameState());
     if (GameStateInterface)
     {
-        GameStateInterface->GetEnemyGoal(GoalLocation);
-        MoveTo(GoalLocation);
+        MoveTo(GameStateInterface->GetEnemyGoal());
     }
     else
     {

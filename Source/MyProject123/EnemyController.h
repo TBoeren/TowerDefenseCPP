@@ -18,8 +18,4 @@ class MYPROJECT123_API AEnemyController : public AAIController
 protected:
     // Called when the game starts or when spawned
     virtual void OnPossess(APawn* InPawn) override;
-
-public:
-    UPROPERTY(EditAnywhere, Category = "Base EnemyController|Movement")
-    FVector GoalLocation;
 };

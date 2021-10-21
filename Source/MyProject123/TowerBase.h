@@ -114,6 +114,9 @@ protected:
     UPROPERTY(EditAnywhere, Category = "Tower Base|Projectile")
     TSubclassOf<ATowerProjectile> TowerProjectile;
 
+    UPROPERTY()
+    FTowerStats CurrentTowerStats;
+
     //Function that applies damage to the enemy
     UFUNCTION()
     virtual void ApplyDamage();
